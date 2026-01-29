@@ -1,0 +1,100 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/services';
+import { RegisterRequest } from '../../../../core/models';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.scss'
+})
+export class RegisterComponent {
+  userData: RegisterRequest = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: ''
+  };
+
+  confirmPassword = '';
+  showPassword = false;
+  showConfirmPassword = false;
+  errorMessage = '';
+  successMessage = '';
+  isLoading = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  get passwordStrength(): { level: number; text: string; color: string } {
+    const password = this.userData.password;
+    if (!password) return { level: 0, text: '', color: '' };
+
+    let score = 0;
+    if (password.length >= 6) score++;
+    if (password.length >= 10) score++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[^a-zA-Z0-9]/.test(password)) score++;
+
+    if (score <= 2) return { level: 1, text: 'Weak', color: '#ef4444' };
+    if (score <= 3) return { level: 2, text: 'Medium', color: '#f59e0b' };
+    if (score <= 4) return { level: 3, text: 'Strong', color: '#10b981' };
+    return { level: 4, text: 'Very Strong', color: '#059669' };
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  onSubmit(): void {
+    // Validation
+    if (!this.userData.firstName || !this.userData.lastName) {
+      this.errorMessage = 'Please enter your full name';
+      return;
+    }
+    if (!this.userData.email) {
+      this.errorMessage = 'Please enter your email address';
+      return;
+    }
+    if (!this.userData.password) {
+      this.errorMessage = 'Please enter a password';
+      return;
+    }
+    if (this.userData.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match';
+      return;
+    }
+    if (this.userData.password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.authService.register(this.userData).subscribe({
+      next: () => {
+        this.successMessage = 'Account created successfully! Redirecting...';
+        this.isLoading = false;
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 1500);
+      },
+      error: (error) => {
+        this.errorMessage = error.userMessage || 'Registration failed. Please try again.';
+        this.isLoading = false;
+      }
+    });
+  }
+}
