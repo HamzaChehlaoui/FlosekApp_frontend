@@ -82,3 +82,35 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+// Smartwatch Global Adjustments (< 220px)
+@media (max-width: 220px) {
+  :root {
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-xl: 14px;
+  }
+
+  body {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  h1 { font-size: 16px !important; }
+  h2 { font-size: 14px !important; }
+  h3 { font-size: 13px !important; }
+  h4 { font-size: 12px !important; }
+  p { font-size: 11px !important; }
+
+  button, input, select, textarea {
+    font-size: 12px !important;
+  }
+}
+
+// Small phones (320px)
+@media (max-width: 320px) {
+  body {
+    font-size: 14px;
+  }
+}

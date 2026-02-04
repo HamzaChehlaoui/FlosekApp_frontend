@@ -541,3 +541,144 @@
     font-weight: 500;
   }
 }
+
+// Small phones (320px)
+@media (max-width: 320px) {
+  .auth-card {
+    padding: 20px 16px;
+  }
+
+  .card-header {
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 22px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+
+    label {
+      font-size: 12px;
+    }
+  }
+
+  .input-wrapper input {
+    padding: 10px 12px 10px 40px;
+    font-size: 14px;
+  }
+
+  .input-wrapper .input-icon {
+    left: 12px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .btn-primary {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .auth-footer p {
+    font-size: 13px;
+  }
+
+  .security-badge {
+    padding: 10px;
+    gap: 6px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    span {
+      font-size: 12px;
+    }
+  }
+}
+
+// Smartwatch (< 220px)
+@media (max-width: 220px) {
+  .auth-card {
+    padding: 12px 10px;
+    min-height: auto;
+  }
+
+  .card-header {
+    margin-bottom: 16px;
+
+    h2 {
+      font-size: 16px;
+    }
+
+    p {
+      font-size: 11px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+
+    label {
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+  }
+
+  .input-wrapper input {
+    padding: 8px 10px 8px 32px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .input-wrapper .input-icon {
+    left: 10px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .form-options {
+    flex-direction: column;
+    gap: 8px;
+
+    label, a {
+      font-size: 10px;
+    }
+  }
+
+  .btn-primary {
+    padding: 10px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .auth-footer {
+    margin-top: 16px;
+    padding-top: 16px;
+
+    p {
+      font-size: 10px;
+    }
+  }
+
+  .security-badge {
+    padding: 8px;
+    margin-top: 12px;
+    border-radius: 6px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    span {
+      font-size: 10px;
+    }
+  }
+}

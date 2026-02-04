@@ -472,3 +472,180 @@
         font-size: 13px;
     }
 }
+
+// Responsive - Small phones (320px)
+@media (max-width: 320px) {
+    .profile-content {
+        padding: 16px 12px;
+    }
+
+    .profile-header {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .user-name {
+        font-size: 18px;
+    }
+
+    .user-email {
+        font-size: 12px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        font-size: 12px;
+    }
+
+    .form-control {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .toggle-container {
+        padding: 14px;
+    }
+
+    .toggle-info h4 {
+        font-size: 13px;
+    }
+
+    .toggle-info p {
+        font-size: 11px;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+
+    .security-badge {
+        font-size: 11px;
+        gap: 6px;
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+}
+
+// Responsive - Smartwatch (< 220px)
+@media (max-width: 220px) {
+    .profile-content {
+        padding: 10px 8px;
+    }
+
+    .profile-header {
+        padding: 14px 12px;
+        margin-bottom: 16px;
+        border-radius: 10px;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+    }
+
+    .user-name {
+        font-size: 14px;
+    }
+
+    .user-email {
+        font-size: 10px;
+    }
+
+    .section {
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    .form-label {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+
+    .form-control {
+        padding: 8px 10px;
+        font-size: 11px;
+        border-radius: 6px;
+    }
+
+    .toggle-container {
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    .toggle-info h4 {
+        font-size: 11px;
+    }
+
+    .toggle-info p {
+        font-size: 9px;
+    }
+
+    .toggle-switch {
+        transform: scale(0.8);
+    }
+
+    .preference-item {
+        padding: 10px;
+    }
+
+    .preference-label {
+        font-size: 11px;
+    }
+
+    .currency-select {
+        padding: 8px 10px;
+        font-size: 11px;
+        border-radius: 6px;
+    }
+
+    .profile-footer {
+        padding: 14px 0;
+        gap: 12px;
+    }
+
+    .action-buttons {
+        gap: 8px;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        padding: 6px 12px;
+        font-size: 10px;
+        border-radius: 6px;
+    }
+
+    .security-badge {
+        font-size: 9px;
+        gap: 4px;
+
+        svg {
+            width: 12px;
+            height: 12px;
+        }
+    }
+}

@@ -775,3 +775,175 @@
      font-weight: 500;
    }
  }
+
+ // Small phones (320px)
+ @media (max-width: 320px) {
+   .auth-card {
+     padding: 20px 16px;
+   }
+
+   .card-header {
+     margin-bottom: 20px;
+
+     h2 {
+       font-size: 20px;
+     }
+
+     p {
+       font-size: 12px;
+     }
+   }
+
+   .progress-indicator {
+     margin-bottom: 24px;
+     padding: 0 10px;
+
+     .progress-step {
+       .step-number {
+         width: 28px;
+         height: 28px;
+         font-size: 12px;
+
+         svg {
+           width: 14px;
+           height: 14px;
+         }
+       }
+
+       .step-label {
+         font-size: 10px;
+       }
+     }
+
+     .progress-line {
+       width: 30px;
+     }
+   }
+
+   .form-row {
+     flex-direction: column;
+     gap: 0;
+   }
+
+   .form-group {
+     margin-bottom: 14px;
+
+     label {
+       font-size: 12px;
+     }
+   }
+
+   .input-wrapper input {
+     padding: 10px 12px 10px 40px;
+     font-size: 14px;
+   }
+
+   .btn-primary, .btn-secondary {
+     padding: 12px;
+     font-size: 14px;
+   }
+ }
+
+ // Smartwatch (< 220px)
+ @media (max-width: 220px) {
+   .auth-card {
+     padding: 12px 10px;
+     min-height: auto;
+   }
+
+   .card-header {
+     margin-bottom: 12px;
+
+     h2 {
+       font-size: 14px;
+     }
+
+     p {
+       font-size: 10px;
+     }
+   }
+
+   .progress-indicator {
+     margin-bottom: 16px;
+     padding: 0;
+
+     .progress-step {
+       gap: 4px;
+
+       .step-number {
+         width: 22px;
+         height: 22px;
+         font-size: 10px;
+
+         svg {
+           width: 12px;
+           height: 12px;
+         }
+       }
+
+       .step-label {
+         font-size: 8px;
+       }
+     }
+
+     .progress-line {
+       width: 16px;
+       margin: 0 4px;
+     }
+   }
+
+   .form-group {
+     margin-bottom: 10px;
+
+     label {
+       font-size: 10px;
+       margin-bottom: 4px;
+     }
+   }
+
+   .input-wrapper input {
+     padding: 8px 10px 8px 30px;
+     font-size: 12px;
+     border-radius: 6px;
+   }
+
+   .input-wrapper .input-icon {
+     left: 10px;
+     width: 14px;
+     height: 14px;
+   }
+
+   .btn-primary, .btn-secondary {
+     padding: 10px;
+     font-size: 12px;
+     border-radius: 6px;
+   }
+
+   .form-actions {
+     gap: 8px;
+   }
+
+   .auth-footer {
+     margin-top: 12px;
+     padding-top: 12px;
+
+     p {
+       font-size: 10px;
+     }
+   }
+
+   .security-badge {
+     padding: 8px;
+     margin-top: 10px;
+     border-radius: 6px;
+
+     svg {
+       width: 12px;
+       height: 12px;
+     }
+
+     span {
+       font-size: 10px;
+     }
+   }
+ }
