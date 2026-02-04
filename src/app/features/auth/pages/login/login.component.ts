@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   showPassword = false;
   errorMessage = '';
   isLoading = false;
-  returnUrl = '/';
+  returnUrl = '/profile';
 
   constructor(
     private authService: AuthService,
