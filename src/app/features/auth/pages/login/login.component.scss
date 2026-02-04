@@ -15,7 +15,7 @@
   position: relative;
   overflow: hidden;
 
-  
+
 
   @media (max-width: 1024px) {
     display: none;
@@ -35,11 +35,11 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 
   .logo-icon {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     background: url("/logo_flosek-.png") center / cover no-repeat;
     border-radius: var(--radius-md);
     display: flex;
@@ -52,12 +52,18 @@
     }
   }
 
-
   .logo-text {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 800;
-    color: var(--primary-dark);
     letter-spacing: -0.5px;
+
+    .text-green {
+      color: #10b981;
+    }
+
+    .text-dark {
+      color: #1f2937;
+    }
   }
 }
 
@@ -228,6 +234,12 @@
   @media (max-width: 1024px) {
     padding: 20px;
   }
+
+  @media (max-width: 480px) {
+    padding: 0;
+    background: white;
+    align-items: flex-start;
+  }
 }
 
 .auth-card {
@@ -239,7 +251,11 @@
   box-shadow: var(--shadow-xl);
 
   @media (max-width: 480px) {
+    max-width: 100%;
     padding: 32px 24px;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 100vh;
   }
 }
 
