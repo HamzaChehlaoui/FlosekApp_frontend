@@ -1,0 +1,23 @@
+<header class="dashboard-header">
+  <div class="header-left">
+    <a routerLink="/" class="logo-link">
+      <img src="/logo_flosek-.png" alt="Flosek" class="logo-image">
+      <span class="logo-text"><span class="text-green">Flo</span><span class="text-dark">sek</span></span>
+    </a>
+  </div>
+  <div class="header-right">
+    @if (user) {
+      <a routerLink="/profile" class="profile-link">
+        <div class="user-avatar">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</div>
+        <span class="user-name">{{ user.firstName }}</span>
+      </a>
+      <button class="btn-logout" (click)="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+        </svg>
+      </button>
+    } @else {
+      <!-- Optional: Show Login/Register links if needed in future -->
+    }
+  </div>
+</header>

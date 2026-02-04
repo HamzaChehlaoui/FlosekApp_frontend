@@ -1,0 +1,141 @@
+// Header Styles - Compact & Organized
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 24px;
+    background: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 56px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+
+    .logo-image {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .logo-text {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+
+        .text-green {
+            color: #10b981;
+        }
+
+        .text-dark {
+            color: #1f2937;
+        }
+    }
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 50px;
+    transition: background 0.2s ease;
+
+    &:hover {
+        background: var(--gray-100);
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .user-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--gray-700);
+    }
+}
+
+.btn-logout {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--gray-100);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        color: var(--gray-500);
+    }
+
+    &:hover {
+        background: var(--error-light);
+
+        svg {
+            color: var(--error);
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 640px) {
+    .dashboard-header {
+        padding: 8px 16px;
+        height: 50px;
+    }
+
+    .logo-link {
+        .logo-image {
+            width: 30px;
+            height: 30px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+        }
+    }
+
+    .profile-link .user-name {
+        display: none;
+    }
+
+    .btn-logout {
+        width: 32px;
+        height: 32px;
+    }
+}
