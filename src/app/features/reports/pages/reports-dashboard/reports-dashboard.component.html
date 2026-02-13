@@ -1,1 +1,205 @@
-<p>reports-dashboard works!</p>
+<app-header></app-header>
+<div class="reports-page">
+  <main class="reports-content">
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="header-left">
+        <div class="page-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+          </svg>
+        </div>
+        <div class="page-title">
+          <h1>Financial Reports</h1>
+          <p class="subtitle">{{ currentPeriod }} • Analytics & Insights</p>
+        </div>
+      </div>
+      <button class="export-btn" (click)="exportReport()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        <span>Export</span>
+      </button>
+    </header>
+
+    <!-- Key Metrics Cards -->
+    <section class="metrics-section">
+      <div class="metrics-grid">
+        @for (metric of keyMetrics; track metric.label) {
+          <div class="metric-card" [style.--metric-color]="metric.color">
+            <div class="metric-header">
+              <div class="metric-icon" [style.background]="metric.color + '15'" [style.color]="metric.color">
+                @switch (metric.icon) {
+                  @case ('income') {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75" />
+                    </svg>
+                  }
+                  @case ('expense') {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75" />
+                    </svg>
+                  }
+                  @case ('savings') {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                    </svg>
+                  }
+                  @case ('rate') {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                    </svg>
+                  }
+                }
+              </div>
+              <span class="metric-label">{{ metric.label }}</span>
+            </div>
+            <div class="metric-value">
+              {{ metric.value | number:'1.0-0' }}
+              @if (metric.label !== 'Savings Rate') {
+                <small>MAD</small>
+              } @else {
+                <small>%</small>
+              }
+            </div>
+            <div class="metric-change" [class.positive]="metric.trend === 'up'" [class.negative]="metric.trend === 'down'">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                @if (metric.trend === 'up') {
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                } @else {
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                }
+              </svg>
+              <span>{{ metric.change | number:'1.1-1' }}% vs last month</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Monthly Trends Chart -->
+    <section class="trends-section">
+      <div class="section-header">
+        <h3>Monthly Trends</h3>
+        <p class="section-subtitle">Income, expenses, and savings over the last 6 months</p>
+      </div>
+      <div class="chart-container">
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="legend-dot income"></span>
+            <span class="legend-label">Income</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot expense"></span>
+            <span class="legend-label">Expenses</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot savings"></span>
+            <span class="legend-label">Savings</span>
+          </div>
+        </div>
+        <div class="chart">
+          <div class="chart-bars">
+            @for (data of monthlyData; track data.month) {
+              <div class="bar-group">
+                <div class="bars">
+                  <div class="bar income" 
+                       [style.height.%]="getBarHeight(data.income)"
+                       [attr.data-value]="data.income">
+                  </div>
+                  <div class="bar expense" 
+                       [style.height.%]="getBarHeight(data.expenses)"
+                       [attr.data-value]="data.expenses">
+                  </div>
+                  <div class="bar savings" 
+                       [style.height.%]="getBarHeight(data.savings)"
+                       [attr.data-value]="data.savings">
+                  </div>
+                </div>
+                <span class="bar-label">{{ data.month }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Grid: Category Breakdown + Top Expenses -->
+    <div class="bottom-grid">
+      <!-- Category Breakdown -->
+      <section class="panel category-panel">
+        <div class="panel-header">
+          <h3>Category Breakdown</h3>
+          <a routerLink="/expenses/categories" class="link-btn">View All</a>
+        </div>
+        <div class="category-list">
+          @for (category of categorySpending; track category.name) {
+            <div class="category-row">
+              <div class="category-left">
+                <div class="category-icon" [style.background]="category.color + '15'" [style.color]="category.color">
+                  <span class="emoji">{{ category.emoji }}</span>
+                </div>
+                <div class="category-info">
+                  <span class="category-name">{{ category.name }}</span>
+                  <div class="category-bar">
+                    <div class="category-fill" 
+                         [style.width.%]="category.percentage" 
+                         [style.background]="category.color">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="category-right">
+                <span class="category-amount">{{ category.amount | number:'1.0-0' }} MAD</span>
+                <span class="category-trend" 
+                      [class.up]="category.trend === 'up'" 
+                      [class.down]="category.trend === 'down'"
+                      [class.stable]="category.trend === 'stable'">
+                  @if (category.trend === 'up') {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                    </svg>
+                  } @else if (category.trend === 'down') {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                    </svg>
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                    </svg>
+                  }
+                  {{ category.change >= 0 ? '+' : '' }}{{ category.change }}%
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Top Expenses -->
+      <section class="panel expenses-panel">
+        <div class="panel-header">
+          <h3>Top Expenses</h3>
+          <a routerLink="/expenses" class="link-btn">View All</a>
+        </div>
+        <div class="expenses-list">
+          @for (expense of topExpenses; track expense.description) {
+            <div class="expense-row">
+              <div class="expense-left">
+                <div class="expense-indicator" [style.background]="expense.color"></div>
+                <div class="expense-details">
+                  <span class="expense-name">{{ expense.description }}</span>
+                  <span class="expense-category">{{ expense.category }}</span>
+                </div>
+              </div>
+              <div class="expense-right">
+                <span class="expense-amount">{{ expense.amount | number:'1.0-0' }} MAD</span>
+                <span class="expense-date">{{ formatDate(expense.date) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
