@@ -1,0 +1,681 @@
+// Reports Dashboard Page Styles - Clean, Organized, Professional
+
+:host {
+    display: block;
+    min-height: calc(100vh - 56px);
+    overflow-y: auto;
+}
+
+.reports-page {
+    min-height: 100%;
+    background: #f8fafc;
+}
+
+.reports-content {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+// ==========================================
+// PAGE HEADER
+// ==========================================
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.page-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+        width: 24px;
+        height: 24px;
+        color: white;
+    }
+}
+
+.page-title {
+    h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 4px 0;
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+    }
+}
+
+// ==========================================
+// METRICS SECTION
+// ==========================================
+.metrics-section {
+    margin-bottom: 24px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.metric-card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.metric-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.metric-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+
+    small {
+        font-size: 16px;
+        font-weight: 500;
+        color: #9ca3af;
+        margin-left: 4px;
+    }
+}
+
+.metric-change {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+
+    svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    &.positive {
+        color: #10b981;
+    }
+
+    &.negative {
+        color: #ef4444;
+    }
+}
+
+// ==========================================
+// TRENDS SECTION (Chart)
+// ==========================================
+.trends-section {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid #f1f5f9;
+}
+
+.section-header {
+    margin-bottom: 20px;
+
+    h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #111827;
+        margin: 0 0 4px 0;
+    }
+
+    .section-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+}
+
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+
+    &.income {
+        background: #10b981;
+    }
+
+    &.expense {
+        background: #ef4444;
+    }
+
+    &.savings {
+        background: #3b82f6;
+    }
+}
+
+.legend-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.chart {
+    padding: 20px 0;
+}
+
+.chart-bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    height: 280px;
+    gap: 12px;
+    padding: 0 20px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.bars {
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+    flex: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+.bar {
+    width: 20px;
+    min-height: 4px;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+
+    &.income {
+        background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    }
+
+    &.expense {
+        background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    &.savings {
+        background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+    }
+
+    &:hover {
+        opacity: 0.8;
+        transform: scaleY(1.02);
+
+        &::after {
+            content: attr(data-value) ' MAD';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111827;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-bottom: 4px;
+        }
+    }
+}
+
+.bar-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: center;
+}
+
+// ==========================================
+// BOTTOM GRID (Category + Expenses)
+// ==========================================
+.bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.panel {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #f1f5f9;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+    }
+}
+
+.link-btn {
+    font-size: 13px;
+    font-weight: 600;
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #2563eb;
+    }
+}
+
+// Category Panel
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.category-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.category-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.category-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .emoji {
+        font-size: 18px;
+    }
+}
+
+.category-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.category-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.category-bar {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.category-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.category-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.category-amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.category-trend {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 600;
+
+    svg {
+        width: 10px;
+        height: 10px;
+    }
+
+    &.up {
+        color: #ef4444;
+    }
+
+    &.down {
+        color: #10b981;
+    }
+
+    &.stable {
+        color: #6b7280;
+    }
+}
+
+// Expenses Panel
+.expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.expense-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+    transition: background 0.2s;
+
+    &:hover {
+        background: #f3f4f6;
+    }
+}
+
+.expense-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.expense-indicator {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+}
+
+.expense-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.expense-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.expense-category {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.expense-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.expense-amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.expense-date {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+// ==========================================
+// RESPONSIVE
+// ==========================================
+
+// Large tablets
+@media (max-width: 1200px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-bars {
+        height: 240px;
+    }
+}
+
+// Tablets
+@media (max-width: 900px) {
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .chart-bars {
+        height: 200px;
+    }
+
+    .bar {
+        width: 16px;
+    }
+}
+
+// Mobile
+@media (max-width: 640px) {
+    .reports-content {
+        padding: 16px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .export-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .metric-card {
+        padding: 16px;
+    }
+
+    .metric-value {
+        font-size: 24px;
+
+        small {
+            font-size: 14px;
+        }
+    }
+
+    .trends-section {
+        padding: 16px;
+    }
+
+    .chart-legend {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .chart-bars {
+        height: 180px;
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .bar {
+        width: 12px;
+    }
+
+    .panel {
+        padding: 16px;
+    }
+}
+
+// Small phones
+@media (max-width: 320px) {
+    .reports-content {
+        padding: 12px;
+    }
+
+    .page-icon {
+        width: 40px;
+        height: 40px;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    .page-title h1 {
+        font-size: 20px;
+    }
+
+    .metric-card {
+        padding: 14px;
+    }
+
+    .metric-value {
+        font-size: 20px;
+    }
+
+    .trends-section,
+    .panel {
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    .chart-bars {
+        height: 160px;
+    }
+
+    .bar {
+        width: 10px;
+    }
+}
