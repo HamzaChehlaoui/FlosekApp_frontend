@@ -1,1 +1,241 @@
-<p>savings-goals works!</p>
+<app-header></app-header>
+<div class="savings-page">
+  <main class="savings-content">
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="header-left">
+        <div class="page-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+          </svg>
+        </div>
+        <div class="page-title">
+          <h1>Savings Goals</h1>
+          <p class="subtitle">Track and achieve your financial goals</p>
+        </div>
+      </div>
+      <button class="add-btn" (click)="openAddGoal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        <span>Add Goal</span>
+      </button>
+    </header>
+
+    <!-- Summary Cards -->
+    <section class="summary-section">
+      <div class="summary-grid">
+        <!-- Total Saved Card - Featured -->
+        <div class="summary-card featured">
+          <div class="card-content">
+            <div class="card-icon saved">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+              </svg>
+            </div>
+            <div class="card-data">
+              <span class="card-label">Total Saved</span>
+              <span class="card-value">{{ totalSaved | number:'1.0-0' }} <small>MAD</small></span>
+            </div>
+          </div>
+          <div class="card-footer positive">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22" />
+            </svg>
+            <span>{{ overallPercentage }}% of total target</span>
+          </div>
+        </div>
+
+        <!-- Total Target Card -->
+        <div class="summary-card">
+          <div class="card-content">
+            <div class="card-icon target">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+              </svg>
+            </div>
+            <div class="card-data">
+              <span class="card-label">Total Target</span>
+              <span class="card-value small">{{ totalTarget | number:'1.0-0' }} <small>MAD</small></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Goals Card -->
+        <div class="summary-card">
+          <div class="card-content">
+            <div class="card-icon active">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </div>
+            <div class="card-data">
+              <span class="card-label">Active Goals</span>
+              <span class="card-value small">{{ activeGoalsCount }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completed Goals Card -->
+        <div class="summary-card">
+          <div class="card-content">
+            <div class="card-icon completed">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+              </svg>
+            </div>
+            <div class="card-data">
+              <span class="card-label">Completed</span>
+              <span class="card-value small text-success">{{ completedGoalsCount }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Goals Section -->
+    <section class="goals-section">
+      <div class="section-header">
+        <h3>Active Savings Goals</h3>
+        <p class="section-subtitle">Track your progress towards financial freedom</p>
+      </div>
+      <div class="goals-grid">
+        @for (goal of activeGoals; track goal.id) {
+          <div class="goal-card" [style.--goal-color]="goal.color">
+            <div class="goal-header">
+              <div class="goal-icon" [style.background]="goal.color + '15'" [style.color]="goal.color">
+                <span class="emoji">{{ goal.emoji }}</span>
+              </div>
+              <div class="goal-info">
+                <h4>{{ goal.name }}</h4>
+                <div class="goal-amounts">
+                  <span class="current-amount">{{ goal.current | number:'1.0-0' }}</span>
+                  <span class="separator">/</span>
+                  <span class="target-amount">{{ goal.target | number:'1.0-0' }} MAD</span>
+                </div>
+              </div>
+              <div class="goal-actions">
+                <button class="action-btn" (click)="editGoal(goal.id)" title="Edit">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="goal-progress">
+              <div class="progress-bar">
+                <div class="progress-fill"
+                     [style.width.%]="goal.percentage > 100 ? 100 : goal.percentage"
+                     [style.background]="goal.color">
+                </div>
+              </div>
+              <div class="progress-info">
+                <span class="percentage-text" [style.color]="goal.color">{{ goal.percentage }}%</span>
+                <span class="remaining-text">{{ goal.target - goal.current | number:'1.0-0' }} MAD to go</span>
+              </div>
+            </div>
+
+            <div class="goal-footer">
+              <div class="goal-meta">
+                @if (goal.deadline) {
+                  <span class="deadline">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                    </svg>
+                    {{ formatDeadline(goal.deadline) }}
+                  </span>
+                }
+                @if (goal.monthlyContribution) {
+                  <span class="monthly">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    {{ goal.monthlyContribution | number:'1.0-0' }} MAD/month
+                  </span>
+                }
+              </div>
+              <button class="contribute-btn" (click)="addContribution(goal.id)" [style.background]="goal.color">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Bottom Grid: Contributions + Completed + Tips -->
+    <div class="bottom-grid">
+      <!-- Recent Contributions -->
+      <section class="panel contributions-panel">
+        <div class="panel-header">
+          <h3>Recent Contributions</h3>
+        </div>
+        <div class="contributions-list">
+          @for (contribution of recentContributions; track contribution.id) {
+            <div class="contribution-row">
+              <div class="contribution-left">
+                <div class="contribution-indicator" [style.background]="contribution.goalColor"></div>
+                <div class="contribution-details">
+                  <span class="contribution-goal">{{ contribution.goalName }}</span>
+                  <span class="contribution-note">{{ contribution.note }}</span>
+                </div>
+              </div>
+              <div class="contribution-right">
+                <span class="contribution-amount">+{{ contribution.amount | number:'1.0-0' }} MAD</span>
+                <span class="contribution-date">{{ formatDate(contribution.date) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Completed Goals -->
+      <section class="panel completed-panel">
+        <div class="panel-header">
+          <h3>Completed Goals</h3>
+          <span class="badge">{{ completedGoalsCount }}</span>
+        </div>
+        <div class="completed-list">
+          @for (goal of completedGoals; track goal.id) {
+            <div class="completed-row">
+              <div class="completed-icon" [style.background]="goal.color + '15'" [style.color]="goal.color">
+                <span class="emoji">{{ goal.emoji }}</span>
+              </div>
+              <div class="completed-info">
+                <span class="completed-name">{{ goal.name }}</span>
+                <span class="completed-amount">{{ goal.current | number:'1.0-0' }} MAD</span>
+              </div>
+              <div class="completed-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Savings Tips -->
+      <section class="panel tips-panel">
+        <div class="panel-header">
+          <h3>Savings Tips</h3>
+        </div>
+        <div class="tips-list">
+          @for (tip of savingsTips; track tip.title) {
+            <div class="tip-card">
+              <span class="tip-icon">{{ tip.icon }}</span>
+              <div class="tip-content">
+                <h4>{{ tip.title }}</h4>
+                <p>{{ tip.description }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
