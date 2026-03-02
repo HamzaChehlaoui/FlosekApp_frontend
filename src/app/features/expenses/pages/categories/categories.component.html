@@ -1,1 +1,203 @@
-<p>categories works!</p>
+<div class="categories-page">
+  <!-- Header -->
+  <header class="page-header">
+    <div>
+      <h1>{{ 'categories.title' | translate }}</h1>
+      <p>{{ 'categories.subtitle' | translate }}</p>
+    </div>
+    <button class="btn btn-primary" (click)="openAddModal()">
+      <span class="material-symbols-outlined btn-icon">add</span>
+      {{ 'categories.newCategory' | translate }}
+    </button>
+  </header>
+
+  <!-- Error -->
+  @if (errorMessage && !showModal) {
+    <div class="toast toast-error">
+      <span class="material-symbols-outlined">error</span>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="state-empty">
+      <div class="spinner"></div>
+      <p>{{ 'common.loading' | translate }}</p>
+    </div>
+  }
+
+  <!-- Empty -->
+  @if (!isLoading && categories.length === 0) {
+    <div class="state-empty">
+      <span class="material-symbols-outlined empty-icon">folder_open</span>
+      <h3>{{ 'categories.noCategories' | translate }}</h3>
+      <p>{{ 'categories.noCategoriesDesc' | translate }}</p>
+      <button class="btn btn-primary" (click)="openAddModal()">{{ 'categories.createCategory' | translate }}</button>
+    </div>
+  }
+
+  <!-- Grid -->
+  @if (!isLoading && categories.length > 0) {
+    <div class="grid">
+      @for (cat of categories; track cat.id) {
+        <div class="card">
+          <div class="card-icon" [style.background-color]="cat.color || '#3b82f6'">
+            <span class="material-symbols-outlined">{{ cat.icon || 'category' }}</span>
+          </div>
+          <div class="card-body">
+            <h3>{{ cat.name }}</h3>
+            @if (cat.description) {
+              <p>{{ cat.description }}</p>
+            }
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" (click)="openEditModal(cat)" title="Edit">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+            <button class="icon-btn icon-btn-danger" (click)="deleteCategory(cat)" title="Delete">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (showModal) {
+  <div class="overlay" (click)="closeModal()" (keydown.escape)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="modal-head">
+        <h2>{{ editingCategory ? ('categories.editCategory' | translate) : ('categories.newCategory' | translate) }}</h2>
+        <button class="icon-btn" (click)="closeModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Alerts -->
+      @if (errorMessage) {
+        <div class="toast toast-error compact">
+          <span class="material-symbols-outlined">error</span>
+          {{ errorMessage }}
+        </div>
+      }
+      @if (successMessage) {
+        <div class="toast toast-success compact">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ successMessage }}
+        </div>
+      }
+
+      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="form">
+
+        <!-- Live Preview -->
+        <div class="preview-bar">
+          <div class="preview-chip" [style.background-color]="categoryForm.get('color')?.value">
+            <span class="material-symbols-outlined">{{ categoryForm.get('icon')?.value || 'category' }}</span>
+          </div>
+          <span class="preview-label">{{ categoryForm.get('name')?.value || ('categories.form.namePlaceholder' | translate) }}</span>
+        </div>
+
+        <!-- Section: Details -->
+        <div class="section">
+          <h4 class="section-title">{{ 'categories.form.name' | translate }}</h4>
+
+          <div class="field">
+            <label for="cat-name">{{ 'categories.form.name' | translate }} <span class="req">*</span></label>
+            <input id="cat-name" type="text" formControlName="name"
+                   [placeholder]="'categories.form.namePlaceholder' | translate"
+                   [class.invalid]="name?.invalid && name?.touched" />
+            @if (name?.invalid && name?.touched) {
+              <span class="field-error">
+                @if (name?.errors?.['required']) { {{ 'categories.form.nameRequired' | translate }} }
+                @if (name?.errors?.['maxlength']) { {{ 'categories.form.nameMaxLength' | translate }} }
+              </span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="cat-desc">{{ 'categories.form.description' | translate }}</label>
+            <input id="cat-desc" type="text" formControlName="description"
+                   [placeholder]="'categories.form.descriptionPlaceholder' | translate" />
+          </div>
+        </div>
+
+        <!-- Section: Icon -->
+        <div class="section">
+          <h4 class="section-title">{{ 'categories.form.icon' | translate }}</h4>
+
+          <!-- Search -->
+          <div class="icon-search-wrap">
+            <span class="material-symbols-outlined search-icon">search</span>
+            <input type="text" [placeholder]="'categories.form.searchIcons' | translate"
+                   [(ngModel)]="iconSearch" [ngModelOptions]="{standalone: true}"
+                   (input)="onSearchChange()" />
+            @if (iconSearch) {
+              <button type="button" class="clear-btn" (click)="clearSearch()">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            }
+          </div>
+
+          <!-- Tabs -->
+          <div class="tabs">
+            @for (tab of iconTabs; track tab) {
+              <button type="button" class="tab"
+                      [class.active]="selectedIconTab === tab"
+                      (click)="selectTab(tab)">
+                {{ tab }}
+              </button>
+            }
+          </div>
+
+          <!-- Icon Grid -->
+          <div class="icon-picker">
+            @for (opt of availableIcons; track opt.icon) {
+              <button type="button" class="icon-cell"
+                      [class.selected]="icon?.value === opt.icon"
+                      (click)="selectIcon(opt.icon)"
+                      [title]="opt.label">
+                <span class="material-symbols-outlined">{{ opt.icon }}</span>
+                <small>{{ opt.label }}</small>
+              </button>
+            }
+            @if (availableIcons.length === 0) {
+              <p class="no-results">{{ 'categories.form.noIconsFound' | translate }}</p>
+            }
+          </div>
+        </div>
+
+        <!-- Section: Color -->
+        <div class="section">
+          <h4 class="section-title">{{ 'categories.form.color' | translate }}</h4>
+          <div class="color-picker">
+            @for (c of colorOptions; track c) {
+              <button type="button" class="color-dot"
+                      [style.background-color]="c"
+                      [class.selected]="color?.value === c"
+                      (click)="selectColor(c)">
+                @if (color?.value === c) {
+                  <span class="material-symbols-outlined check">check</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-footer">
+          <button type="button" class="btn btn-ghost" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+            @if (isSubmitting) {
+              <span class="spinner-sm"></span>
+            }
+            {{ editingCategory ? ('common.update' | translate) : ('common.create' | translate) }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
