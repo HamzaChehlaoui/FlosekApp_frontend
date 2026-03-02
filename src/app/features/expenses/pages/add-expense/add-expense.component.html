@@ -1,1 +1,146 @@
-<p>add-expense works!</p>
+<div class="add-expense-container">
+  <div class="page-header">
+    <h1>{{ isEditMode ? ('expenses.editExpense' | translate) : ('expenses.addNewExpense' | translate) }}</h1>
+    <p>{{ isEditMode ? ('expenses.updateDetails' | translate) : ('expenses.recordNew' | translate) }}</p>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>{{ 'common.loading' | translate }}</p>
+    </div>
+  }
+
+  <!-- Messages -->
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="alert alert-success">
+      <span class="alert-icon">✅</span>
+      {{ successMessage }}
+    </div>
+  }
+
+  <!-- Expense Form -->
+  @if (!isLoading) {
+    <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()" class="expense-form">
+      <!-- Amount -->
+      <div class="form-group">
+        <label for="amount">{{ 'expenses.amount' | translate }} (MAD) *</label>
+        <div class="input-wrapper">
+          <span class="currency-symbol">MAD</span>
+          <input
+            type="number"
+            id="amount"
+            formControlName="amount"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            [class.invalid]="amount?.invalid && amount?.touched"
+          />
+        </div>
+        @if (amount?.invalid && amount?.touched) {
+          <span class="error-text">
+            @if (amount?.errors?.['required']) { Amount is required }
+            @if (amount?.errors?.['min']) { Amount must be greater than 0 }
+          </span>
+        }
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">{{ 'expenses.description' | translate }} *</label>
+        <input
+          type="text"
+          id="description"
+          formControlName="description"
+          placeholder="What did you spend on?"
+          [class.invalid]="description?.invalid && description?.touched"
+        />
+        @if (description?.invalid && description?.touched) {
+          <span class="error-text">
+            @if (description?.errors?.['required']) { Description is required }
+            @if (description?.errors?.['maxlength']) { Description is too long (max 255 characters) }
+          </span>
+        }
+      </div>
+
+      <!-- Date -->
+      <div class="form-group">
+        <label for="expenseDate">{{ 'expenses.date' | translate }} *</label>
+        <input
+          type="date"
+          id="expenseDate"
+          formControlName="expenseDate"
+          [class.invalid]="expenseDate?.invalid && expenseDate?.touched"
+        />
+        @if (expenseDate?.invalid && expenseDate?.touched) {
+          <span class="error-text">Date is required</span>
+        }
+      </div>
+
+      <!-- Category -->
+      <div class="form-group">
+        <label for="categoryId">{{ 'expenses.category' | translate }} *</label>
+        <select
+          id="categoryId"
+          formControlName="categoryId"
+          [class.invalid]="categoryId?.invalid && categoryId?.touched"
+        >
+          <option value="">Select a category</option>
+          @for (category of categories; track category.id) {
+            <option [value]="category.id">
+              {{ category.icon }} {{ category.name }}
+            </option>
+          }
+        </select>
+        @if (categoryId?.invalid && categoryId?.touched) {
+          <span class="error-text">Category is required</span>
+        }
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label for="notes">{{ 'expenses.notes' | translate }}</label>
+        <textarea
+          id="notes"
+          formControlName="notes"
+          placeholder="Add any additional notes..."
+          rows="3"
+          [class.invalid]="notes?.invalid && notes?.touched"
+        ></textarea>
+        @if (notes?.invalid && notes?.touched) {
+          <span class="error-text">Notes are too long (max 500 characters)</span>
+        }
+      </div>
+
+      <!-- Recurring -->
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="isRecurring" />
+          <span class="checkmark"></span>
+          {{ 'expenses.recurringExpense' | translate }}
+        </label>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <span class="spinner-small"></span>
+            {{ 'common.saving' | translate }}
+          } @else {
+            {{ isEditMode ? ('expenses.updateExpense' | translate) : ('expenses.addExpense' | translate) }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>
