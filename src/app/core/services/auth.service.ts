@@ -9,13 +9,13 @@ import { LoginRequest, RegisterRequest, AuthResponse, User } from '../models';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`;
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getStoredUser());
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(this.getStoredUser());
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(
-    private http: HttpClient,
-    private router: Router
+    private readonly http: HttpClient,
+    private readonly router: Router
   ) { }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
