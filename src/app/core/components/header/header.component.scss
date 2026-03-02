@@ -52,6 +52,117 @@
     gap: 8px;
 }
 
+// Language Switcher
+.lang-switcher {
+    position: relative;
+}
+
+.lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-300);
+    }
+
+    .lang-flag {
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    .lang-code {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+
+    .chevron {
+        width: 14px;
+        height: 14px;
+        color: var(--gray-500);
+        transition: transform 0.2s ease;
+
+        &.open {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+    z-index: 200;
+
+    &.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    text-align: left;
+
+    &:hover {
+        background: var(--gray-50);
+    }
+
+    &.active {
+        background: rgba(16, 185, 129, 0.08);
+
+        .lang-name {
+            color: #059669;
+            font-weight: 600;
+        }
+    }
+
+    .lang-flag {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .lang-name {
+        flex: 1;
+        font-size: 13px;
+        color: var(--gray-700);
+    }
+
+    .check-icon {
+        width: 16px;
+        height: 16px;
+        color: #10b981;
+    }
+}
+
 // Profile Chip
 .profile-chip {
     display: flex;
