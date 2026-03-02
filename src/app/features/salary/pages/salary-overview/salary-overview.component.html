@@ -1,1 +1,204 @@
-<p>salary-overview works!</p>
+<div class="salary-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>{{ 'salary.overview' | translate }}</h1>
+      <p>{{ 'salary.manageIncome' | translate }}</p>
+    </div>
+    <button class="btn btn-primary" (click)="openAddModal()">
+      <span>+</span> {{ 'salary.addSalary' | translate }}
+    </button>
+  </div>
+
+  <!-- Current Salary Card -->
+  <div class="current-salary-section">
+    <h2>{{ 'salary.currentSalary' | translate }}</h2>
+    @if (currentSalary) {
+      <div class="current-salary-card">
+        <div class="salary-amount">
+          <span class="amount">{{ formatCurrency(currentSalary.amount, currentSalary.currency) }}</span>
+          <span class="period">/ month</span>
+        </div>
+        <div class="salary-details">
+          <span class="effective-date">
+            Effective since {{ formatDate(currentSalary.effectiveDate) }}
+          </span>
+          @if (currentSalary.description) {
+            <span class="description">{{ currentSalary.description }}</span>
+          }
+        </div>
+        <div class="annual-estimate">
+          <span class="label">{{ 'salary.annualEstimate' | translate }}</span>
+          <span class="value">{{ formatCurrency(currentSalary.amount * 12, currentSalary.currency) }}</span>
+        </div>
+      </div>
+    } @else {
+      <div class="no-salary-card">
+        <span class="icon">💰</span>
+        <p>{{ 'salary.noCurrentSalary' | translate }}</p>
+        <button class="btn btn-primary btn-sm" (click)="openAddModal()">{{ 'salary.setSalary' | translate }}</button>
+      </div>
+    }
+  </div>
+
+  <!-- Error Message -->
+  @if (errorMessage && !showModal) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Salary History -->
+  <div class="salary-history-section">
+    <h2>{{ 'salary.salaryHistory' | translate }}</h2>
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading salary history...</p>
+      </div>
+    }
+
+    @if (!isLoading && salaries.length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">📊</span>
+        <h3>No salary records</h3>
+        <p>Add your salary to start tracking your income history</p>
+      </div>
+    }
+
+    @if (!isLoading && salaries.length > 0) {
+      <div class="salary-table-container">
+        <table class="salary-table">
+          <thead>
+            <tr>
+              <th>Amount</th>
+              <th>Effective Date</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (salary of salaries; track salary.id) {
+              <tr [class.current]="salary.isCurrent">
+                <td class="amount-cell">
+                  {{ formatCurrency(salary.amount, salary.currency) }}
+                </td>
+                <td>{{ formatDate(salary.effectiveDate) }}</td>
+                <td>{{ salary.description || '-' }}</td>
+                <td>
+                  @if (salary.isCurrent) {
+                    <span class="status-badge current">Current</span>
+                  } @else {
+                    <span class="status-badge past">Past</span>
+                  }
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-icon edit" (click)="openEditModal(salary)" title="Edit">
+                    ✏️
+                  </button>
+                  <button class="btn-icon delete" (click)="deleteSalary(salary)" title="Delete">
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+@if (showModal) {
+  <div class="modal-overlay" (click)="closeModal()" (keydown.escape)="closeModal()" role="dialog" aria-modal="true">
+    <div class="modal" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingSalary ? 'Edit Salary' : 'Add New Salary' }}</h2>
+        <button class="btn-close" (click)="closeModal()">×</button>
+      </div>
+
+      @if (errorMessage) {
+        <div class="alert alert-error">{{ errorMessage }}</div>
+      }
+
+      @if (successMessage) {
+        <div class="alert alert-success">{{ successMessage }}</div>
+      }
+
+      <form [formGroup]="salaryForm" (ngSubmit)="onSubmit()" class="salary-form">
+        <!-- Amount -->
+        <div class="form-group">
+          <label for="amount">Monthly Amount *</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="amount"
+              formControlName="amount"
+              placeholder="0.00"
+              step="0.01"
+              min="0"
+              [class.invalid]="amount?.invalid && amount?.touched"
+            />
+          </div>
+          @if (amount?.invalid && amount?.touched) {
+            <span class="error-text">
+              @if (amount?.errors?.['required']) { Amount is required }
+              @if (amount?.errors?.['min']) { Amount must be greater than 0 }
+            </span>
+          }
+        </div>
+
+        <!-- Currency -->
+        <div class="form-group">
+          <label for="currency">Currency *</label>
+          <select id="currency" formControlName="currency">
+            <option value="MAD">MAD - Moroccan Dirham</option>
+            <option value="USD">USD - US Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+          </select>
+        </div>
+
+        <!-- Effective Date -->
+        <div class="form-group">
+          <label for="effectiveDate">Effective Date *</label>
+          <input
+            type="date"
+            id="effectiveDate"
+            formControlName="effectiveDate"
+            [class.invalid]="effectiveDate?.invalid && effectiveDate?.touched"
+          />
+          @if (effectiveDate?.invalid && effectiveDate?.touched) {
+            <span class="error-text">Effective date is required</span>
+          }
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description">Description (Optional)</label>
+          <input
+            type="text"
+            id="description"
+            formControlName="description"
+            placeholder="e.g., Salary increase, New position"
+          />
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+            @if (isSubmitting) {
+              <span class="spinner-small"></span>
+              Saving...
+            } @else {
+              {{ editingSalary ? 'Update' : 'Add' }} Salary
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

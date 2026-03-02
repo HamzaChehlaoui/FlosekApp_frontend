@@ -1,1 +1,128 @@
-<p>salary-history works!</p>
+<div class="salary-history-container">
+  <div class="page-header">
+    <h1>{{ 'salary.history.title' | translate }}</h1>
+    <p>{{ 'salary.history.subtitle' | translate }}</p>
+  </div>
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>{{ 'salary.history.loading' | translate }}</p>
+    </div>
+  }
+
+  @if (!isLoading && salaries.length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">📈</span>
+      <h3>{{ 'salary.history.noHistory' | translate }}</h3>
+      <p>{{ 'salary.history.noHistoryDesc' | translate }}</p>
+    </div>
+  }
+
+  @if (!isLoading && salaries.length > 0) {
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">📊</span>
+        <div class="stat-content">
+          <span class="stat-label">{{ 'salary.history.averageSalary' | translate }}</span>
+          <span class="stat-value">{{ formatCurrency(averageSalary) }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⬆️</span>
+        <div class="stat-content">
+          <span class="stat-label">{{ 'salary.history.highestSalary' | translate }}</span>
+          <span class="stat-value">{{ formatCurrency(highestSalary) }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⬇️</span>
+        <div class="stat-content">
+          <span class="stat-label">{{ 'salary.history.lowestSalary' | translate }}</span>
+          <span class="stat-value">{{ formatCurrency(lowestSalary) }}</span>
+        </div>
+      </div>
+      <div class="stat-card growth">
+        <span class="stat-icon">📈</span>
+        <div class="stat-content">
+          <span class="stat-label">{{ 'salary.history.totalGrowth' | translate }}</span>
+          <span class="stat-value" [class.positive]="totalGrowth > 0" [class.negative]="totalGrowth < 0">
+            {{ totalGrowth > 0 ? '+' : '' }}{{ totalGrowth | number:'1.1-1' }}%
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Salary Chart -->
+    <div class="chart-section">
+      <h2>{{ 'salary.history.salaryProgression' | translate }}</h2>
+      <div class="chart-container">
+        <div class="chart">
+          @for (salary of salaries.slice().reverse(); track salary.id; let i = $index) {
+            <div class="chart-bar-wrapper">
+              <div
+                class="chart-bar"
+                [style.height.%]="getBarHeight(salary.amount)"
+                [class.current]="salary.isCurrent"
+              >
+                <span class="bar-value">{{ formatCurrency(salary.amount) }}</span>
+              </div>
+              <span class="bar-label">{{ formatDate(salary.effectiveDate) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-section">
+      <h2>{{ 'salary.history.historyTimeline' | translate }}</h2>
+      <div class="timeline">
+        @for (salary of salaries; track salary.id; let i = $index) {
+          <div class="timeline-item" [class.current]="salary.isCurrent">
+            <div class="timeline-marker">
+              @if (salary.isCurrent) { 💰 } @else { 📝 }
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-header">
+                <span class="timeline-amount">{{ formatCurrency(salary.amount, salary.currency) }}</span>
+                @if (salary.isCurrent) {
+                  <span class="badge current">{{ 'salary.current' | translate }}</span>
+                }
+              </div>
+              <div class="timeline-date">{{ formatDate(salary.effectiveDate) }}</div>
+              @if (salary.description) {
+                <div class="timeline-description">{{ salary.description }}</div>
+              }
+              @if (i < salaries.length - 1) {
+                <div class="timeline-change">
+                  @if (salary.amount > salaries[i + 1].amount) {
+                    <span class="change positive">
+                      +{{ formatCurrency(salary.amount - salaries[i + 1].amount) }}
+                      (+{{ ((salary.amount - salaries[i + 1].amount) / salaries[i + 1].amount * 100) | number:'1.1-1' }}%)
+                    </span>
+                  } @else if (salary.amount < salaries[i + 1].amount) {
+                    <span class="change negative">
+                      {{ formatCurrency(salary.amount - salaries[i + 1].amount) }}
+                      ({{ ((salary.amount - salaries[i + 1].amount) / salaries[i + 1].amount * 100) | number:'1.1-1' }}%)
+                    </span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
