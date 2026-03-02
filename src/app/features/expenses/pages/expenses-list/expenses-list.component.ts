@@ -2,21 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
+import { ExpenseService, CategoryService } from '../../../../core/services';
+import { Expense, Category } from '../../../../core/models';
 
-interface Expense {
-  id: number;
+interface ExpenseDisplay {
+  id: string;
   description: string;
   amount: number;
   category: string;
   categoryEmoji: string;
   categoryColor: string;
   date: Date;
-  paymentMethod: string;
   notes?: string;
 }
 
-interface Category {
+interface CategorySummary {
   name: string;
   emoji: string;
   color: string;
@@ -27,14 +29,19 @@ interface Category {
 @Component({
   selector: 'app-expenses-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HeaderComponent],
+  imports: [CommonModule, RouterLink, FormsModule, HeaderComponent, TranslateModule],
   templateUrl: './expenses-list.component.html',
   styleUrl: './expenses-list.component.scss'
 })
 export class ExpensesListComponent implements OnInit {
-  expenses: Expense[] = [];
-  filteredExpenses: Expense[] = [];
-  categories: Category[] = [];
+  expenses: ExpenseDisplay[] = [];
+  filteredExpenses: ExpenseDisplay[] = [];
+  categories: CategorySummary[] = [];
+  allCategories: Category[] = [];
+
+  // Loading & Error states
+  isLoading = true;
+  errorMessage = '';
 
   // Filters
   searchQuery = '';
@@ -50,11 +57,15 @@ export class ExpensesListComponent implements OnInit {
   // View mode
   viewMode: 'list' | 'grid' = 'list';
 
+  constructor(
+    private readonly expenseService: ExpenseService,
+    private readonly categoryService: CategoryService
+  ) {}
+
   ngOnInit(): void {
-    this.loadExpenses();
-    this.loadCategories();
-    this.calculateSummary();
     this.selectedMonth = this.getCurrentMonth();
+    this.loadCategories();
+    this.loadExpenses();
   }
 
   getCurrentMonth(): string {
@@ -63,33 +74,62 @@ export class ExpensesListComponent implements OnInit {
   }
 
   loadExpenses(): void {
-    // Mock data - Replace with API call
-    this.expenses = [
-      { id: 1, description: 'Grocery Shopping', amount: 450.5, category: 'Food', categoryEmoji: '🛒', categoryColor: '#f59e0b', date: new Date('2026-02-04'), paymentMethod: 'Card', notes: 'Weekly groceries' },
-      { id: 2, description: 'Electricity Bill', amount: 320, category: 'Bills', categoryEmoji: '⚡', categoryColor: '#8b5cf6', date: new Date('2026-02-03'), paymentMethod: 'Bank Transfer' },
-      { id: 3, description: 'Restaurant Dinner', amount: 180, category: 'Food', categoryEmoji: '🍽️', categoryColor: '#f59e0b', date: new Date('2026-02-03'), paymentMethod: 'Card' },
-      { id: 4, description: 'Gas Station', amount: 250, category: 'Transport', categoryEmoji: '⛽', categoryColor: '#3b82f6', date: new Date('2026-02-02'), paymentMethod: 'Card' },
-      { id: 5, description: 'Netflix Subscription', amount: 55, category: 'Entertainment', categoryEmoji: '🎬', categoryColor: '#ec4899', date: new Date('2026-02-01'), paymentMethod: 'Card' },
-      { id: 6, description: 'Rent Payment', amount: 2000, category: 'Housing', categoryEmoji: '🏠', categoryColor: '#10b981', date: new Date('2026-02-01'), paymentMethod: 'Bank Transfer' },
-      { id: 7, description: 'Phone Bill', amount: 150, category: 'Bills', categoryEmoji: '📱', categoryColor: '#8b5cf6', date: new Date('2026-01-30'), paymentMethod: 'Card' },
-      { id: 8, description: 'Gym Membership', amount: 200, category: 'Health', categoryEmoji: '💪', categoryColor: '#06b6d4', date: new Date('2026-01-28'), paymentMethod: 'Card' },
-      { id: 9, description: 'Coffee Shop', amount: 45, category: 'Food', categoryEmoji: '☕', categoryColor: '#f59e0b', date: new Date('2026-01-27'), paymentMethod: 'Cash' },
-      { id: 10, description: 'Uber Ride', amount: 85, category: 'Transport', categoryEmoji: '🚗', categoryColor: '#3b82f6', date: new Date('2026-01-26'), paymentMethod: 'Card' },
-    ];
-    this.applyFilters();
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.expenseService.getAllExpenses().subscribe({
+      next: (expenses) => {
+        this.expenses = expenses.map(exp => this.mapExpenseToDisplay(exp));
+        this.applyFilters();
+        this.calculateSummary();
+        this.updateCategorySummary();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading expenses:', error);
+        this.errorMessage = 'Failed to load expenses. Please try again.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private mapExpenseToDisplay(expense: Expense): ExpenseDisplay {
+    return {
+      id: expense.id,
+      description: expense.description || expense.category?.name || 'Expense',
+      amount: expense.amount,
+      category: expense.category?.name || 'Other',
+      categoryEmoji: expense.category?.icon || '📦',
+      categoryColor: expense.category?.color || '#6b7280',
+      date: new Date(expense.expenseDate),
+      notes: expense.notes
+    };
   }
 
   loadCategories(): void {
-    this.categories = [
-      { name: 'Food', emoji: '🍔', color: '#f59e0b', count: 0, total: 0 },
-      { name: 'Transport', emoji: '🚗', color: '#3b82f6', count: 0, total: 0 },
-      { name: 'Housing', emoji: '🏠', color: '#10b981', count: 0, total: 0 },
-      { name: 'Bills', emoji: '📄', color: '#8b5cf6', count: 0, total: 0 },
-      { name: 'Entertainment', emoji: '🎬', color: '#ec4899', count: 0, total: 0 },
-      { name: 'Health', emoji: '💪', color: '#06b6d4', count: 0, total: 0 },
-      { name: 'Shopping', emoji: '🛍️', color: '#f43f5e', count: 0, total: 0 },
-      { name: 'Other', emoji: '📦', color: '#6b7280', count: 0, total: 0 },
-    ];
+    this.categoryService.getAllCategories().subscribe({
+      next: (categories) => {
+        this.allCategories = categories;
+        this.categories = categories.map(cat => ({
+          name: cat.name,
+          emoji: cat.icon || '📦',
+          color: cat.color || '#6b7280',
+          count: 0,
+          total: 0
+        }));
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+      }
+    });
+  }
+
+  updateCategorySummary(): void {
+    // Reset counts
+    this.categories.forEach(cat => {
+      cat.count = 0;
+      cat.total = 0;
+    });
 
     // Calculate counts and totals
     this.expenses.forEach(exp => {
@@ -184,11 +224,20 @@ export class ExpensesListComponent implements OnInit {
     this.viewMode = this.viewMode === 'list' ? 'grid' : 'list';
   }
 
-  deleteExpense(id: number): void {
+  deleteExpense(id: string): void {
     if (confirm('Are you sure you want to delete this expense?')) {
-      this.expenses = this.expenses.filter(exp => exp.id !== id);
-      this.applyFilters();
-      this.calculateSummary();
+      this.expenseService.deleteExpense(id).subscribe({
+        next: () => {
+          this.expenses = this.expenses.filter(exp => exp.id !== id);
+          this.applyFilters();
+          this.calculateSummary();
+          this.updateCategorySummary();
+        },
+        error: (error) => {
+          console.error('Error deleting expense:', error);
+          alert('Failed to delete expense. Please try again.');
+        }
+      });
     }
   }
 
