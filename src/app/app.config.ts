@@ -1,6 +1,8 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
 import { authInterceptor, errorInterceptor } from './core';
@@ -11,6 +13,15 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([authInterceptor, errorInterceptor])
-    )
+    ),
+    importProvidersFrom(
+      TranslateModule.forRoot({
+        defaultLanguage: 'en'
+      })
+    ),
+    provideTranslateHttpLoader({
+      prefix: './i18n/',
+      suffix: '.json'
+    })
   ]
 };
