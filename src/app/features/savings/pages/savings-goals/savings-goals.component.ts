@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
+import { SavingsGoalService } from '../../../../core/services';
+import { SavingsGoal } from '../../../../core/models';
 
-interface SavingsGoal {
-  id: number;
+interface SavingsGoalDisplay {
+  id: string;
   name: string;
   emoji: string;
   color: string;
@@ -13,17 +15,6 @@ interface SavingsGoal {
   percentage: number;
   deadline?: Date;
   status: 'active' | 'completed' | 'paused';
-  monthlyContribution?: number;
-}
-
-interface Contribution {
-  id: number;
-  goalId: number;
-  goalName: string;
-  goalColor: string;
-  amount: number;
-  date: Date;
-  note?: string;
 }
 
 interface SavingsTip {
@@ -33,14 +24,27 @@ interface SavingsTip {
   category: 'strategy' | 'motivation' | 'tip';
 }
 
+interface RecentContribution {
+  id: string;
+  goalName: string;
+  goalColor: string;
+  amount: number;
+  note: string;
+  date: Date;
+}
+
 @Component({
   selector: 'app-savings-goals',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, RouterLink],
+  imports: [CommonModule, HeaderComponent, TranslateModule],
   templateUrl: './savings-goals.component.html',
   styleUrl: './savings-goals.component.scss'
 })
 export class SavingsGoalsComponent implements OnInit {
+  // Loading & Error states
+  isLoading = true;
+  errorMessage = '';
+
   // Summary Stats
   totalSaved = 0;
   totalTarget = 0;
@@ -49,11 +53,11 @@ export class SavingsGoalsComponent implements OnInit {
   overallPercentage = 0;
 
   // Goals
-  activeGoals: SavingsGoal[] = [];
-  completedGoals: SavingsGoal[] = [];
+  activeGoals: SavingsGoalDisplay[] = [];
+  completedGoals: SavingsGoalDisplay[] = [];
 
-  // Recent Contributions
-  recentContributions: Contribution[] = [];
+  // Recent Contributions (empty for now - will be populated from API if available)
+  recentContributions: RecentContribution[] = [];
 
   // Savings Tips
   savingsTips: SavingsTip[] = [
@@ -83,155 +87,49 @@ export class SavingsGoalsComponent implements OnInit {
     }
   ];
 
+  constructor(private readonly savingsGoalService: SavingsGoalService) {}
+
   ngOnInit(): void {
     this.loadSavingsData();
-    this.calculateSummary();
   }
 
   loadSavingsData(): void {
-    // Mock data - Replace with actual API calls
-    this.activeGoals = [
-      {
-        id: 1,
-        name: 'New Car',
-        emoji: '🚗',
-        color: '#10b981',
-        current: 24000,
-        target: 40000,
-        percentage: 60,
-        deadline: new Date('2026-12-31'),
-        status: 'active',
-        monthlyContribution: 2000
-      },
-      {
-        id: 2,
-        name: 'Emergency Fund',
-        emoji: '🏦',
-        color: '#3b82f6',
-        current: 8500,
-        target: 10000,
-        percentage: 85,
-        status: 'active',
-        monthlyContribution: 500
-      },
-      {
-        id: 3,
-        name: 'Vacation',
-        emoji: '✈️',
-        color: '#f59e0b',
-        current: 3200,
-        target: 8000,
-        percentage: 40,
-        deadline: new Date('2026-08-15'),
-        status: 'active',
-        monthlyContribution: 800
-      },
-      {
-        id: 4,
-        name: 'Home Renovation',
-        emoji: '🏠',
-        color: '#8b5cf6',
-        current: 15000,
-        target: 25000,
-        percentage: 60,
-        status: 'active',
-        monthlyContribution: 1500
-      },
-      {
-        id: 5,
-        name: 'Education Fund',
-        emoji: '📚',
-        color: '#ec4899',
-        current: 5000,
-        target: 15000,
-        percentage: 33,
-        deadline: new Date('2027-09-01'),
-        status: 'active',
-        monthlyContribution: 600
-      },
-      {
-        id: 6,
-        name: 'Investment Portfolio',
-        emoji: '📈',
-        color: '#06b6d4',
-        current: 12000,
-        target: 30000,
-        percentage: 40,
-        status: 'active',
-        monthlyContribution: 1000
-      }
-    ];
+    this.isLoading = true;
+    this.errorMessage = '';
 
-    this.completedGoals = [
-      {
-        id: 101,
-        name: 'Laptop',
-        emoji: '💻',
-        color: '#10b981',
-        current: 5000,
-        target: 5000,
-        percentage: 100,
-        status: 'completed'
-      },
-      {
-        id: 102,
-        name: 'Wedding Gift',
-        emoji: '💍',
-        color: '#ec4899',
-        current: 2000,
-        target: 2000,
-        percentage: 100,
-        status: 'completed'
-      }
-    ];
+    this.savingsGoalService.getAllSavingsGoals().subscribe({
+      next: (goals) => {
+        this.activeGoals = goals
+          .filter(g => !g.isCompleted)
+          .map(g => this.mapGoalToDisplay(g, 'active'));
 
-    this.recentContributions = [
-      {
-        id: 1,
-        goalId: 1,
-        goalName: 'New Car',
-        goalColor: '#10b981',
-        amount: 2000,
-        date: new Date('2026-02-10'),
-        note: 'Monthly contribution'
+        this.completedGoals = goals
+          .filter(g => g.isCompleted)
+          .map(g => this.mapGoalToDisplay(g, 'completed'));
+
+        this.calculateSummary();
+        this.isLoading = false;
       },
-      {
-        id: 2,
-        goalId: 3,
-        goalName: 'Vacation',
-        goalColor: '#f59e0b',
-        amount: 800,
-        date: new Date('2026-02-08'),
-        note: 'Monthly contribution'
-      },
-      {
-        id: 3,
-        goalId: 2,
-        goalName: 'Emergency Fund',
-        goalColor: '#3b82f6',
-        amount: 500,
-        date: new Date('2026-02-05'),
-        note: 'Monthly contribution'
-      },
-      {
-        id: 4,
-        goalId: 4,
-        goalName: 'Home Renovation',
-        goalColor: '#8b5cf6',
-        amount: 1500,
-        date: new Date('2026-02-03'),
-        note: 'Monthly contribution'
-      },
-      {
-        id: 5,
-        goalId: 1,
-        goalName: 'New Car',
-        goalColor: '#10b981',
-        amount: 1000,
-        date: new Date('2026-01-28'),
-        note: 'Bonus contribution'
+      error: (error) => {
+        console.error('Error loading savings goals:', error);
+        this.errorMessage = 'Failed to load savings goals. Please try again.';
+        this.isLoading = false;
       }
-    ];
+    });
+  }
+
+  private mapGoalToDisplay(goal: SavingsGoal, status: 'active' | 'completed'): SavingsGoalDisplay {
+    return {
+      id: goal.id,
+      name: goal.name,
+      emoji: goal.icon || '🎯',
+      color: goal.color || '#10b981',
+      current: goal.currentAmount,
+      target: goal.targetAmount,
+      percentage: goal.progressPercentage || 0,
+      deadline: goal.targetDate ? new Date(goal.targetDate) : undefined,
+      status
+    };
   }
 
   calculateSummary(): void {
@@ -249,7 +147,7 @@ export class SavingsGoalsComponent implements OnInit {
     const now = new Date();
     const diff = deadline.getTime() - now.getTime();
     const months = Math.ceil(diff / (1000 * 60 * 60 * 24 * 30));
-    return months > 0 ? months : 0;
+    return Math.max(months, 0);
   }
 
   formatDeadline(deadline?: Date): string {
@@ -275,24 +173,51 @@ export class SavingsGoalsComponent implements OnInit {
   }
 
   openAddGoal(): void {
-    // TODO: Navigate to add goal or open modal
+    // Navigate to add goal page or open modal
     console.log('Open add goal');
   }
 
-  addContribution(goalId: number): void {
-    // TODO: Navigate to add contribution or open modal
-    console.log('Add contribution to goal:', goalId);
+  addContribution(goalId: string): void {
+    const amount = prompt('Enter contribution amount:');
+    if (amount && !Number.isNaN(Number(amount))) {
+      this.savingsGoalService.addContribution(goalId, { amount: Number(amount) }).subscribe({
+        next: (updatedGoal) => {
+          const index = this.activeGoals.findIndex(g => g.id === goalId);
+          if (index !== -1) {
+            this.activeGoals[index] = this.mapGoalToDisplay(updatedGoal, 'active');
+            if (updatedGoal.isCompleted) {
+              this.completedGoals.push(this.mapGoalToDisplay(updatedGoal, 'completed'));
+              this.activeGoals = this.activeGoals.filter(g => g.id !== goalId);
+            }
+          }
+          this.calculateSummary();
+        },
+        error: (error) => {
+          console.error('Error adding contribution:', error);
+          alert('Failed to add contribution. Please try again.');
+        }
+      });
+    }
   }
 
-  editGoal(goalId: number): void {
-    // TODO: Navigate to edit goal or open modal
+  editGoal(goalId: string): void {
+    // Navigate to edit goal page or open modal
     console.log('Edit goal:', goalId);
   }
 
-  deleteGoal(goalId: number): void {
+  deleteGoal(goalId: string): void {
     if (confirm('Are you sure you want to delete this savings goal?')) {
-      this.activeGoals = this.activeGoals.filter(goal => goal.id !== goalId);
-      this.calculateSummary();
+      this.savingsGoalService.deleteSavingsGoal(goalId).subscribe({
+        next: () => {
+          this.activeGoals = this.activeGoals.filter(goal => goal.id !== goalId);
+          this.completedGoals = this.completedGoals.filter(goal => goal.id !== goalId);
+          this.calculateSummary();
+        },
+        error: (error) => {
+          console.error('Error deleting goal:', error);
+          alert('Failed to delete savings goal. Please try again.');
+        }
+      });
     }
   }
 }
