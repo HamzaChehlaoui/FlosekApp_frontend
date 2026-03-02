@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
 
 interface MonthlyData {
@@ -32,7 +33,7 @@ interface FinancialMetric {
 @Component({
   selector: 'app-reports-dashboard',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, RouterLink],
+  imports: [CommonModule, HeaderComponent, RouterLink, TranslateModule],
   templateUrl: './reports-dashboard.component.html',
   styleUrl: './reports-dashboard.component.scss'
 })

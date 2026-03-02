@@ -10,15 +10,15 @@
           </svg>
         </div>
         <div class="page-title">
-          <h1>Financial Reports</h1>
-          <p class="subtitle">{{ currentPeriod }} • Analytics & Insights</p>
+          <h1>{{ 'reports.title' | translate }}</h1>
+          <p class="subtitle">{{ currentPeriod }} • {{ 'reports.analyticsInsights' | translate }}</p>
         </div>
       </div>
       <button class="export-btn" (click)="exportReport()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
         </svg>
-        <span>Export</span>
+        <span>{{ 'reports.export' | translate }}</span>
       </button>
     </header>
 
@@ -80,8 +80,8 @@
     <!-- Monthly Trends Chart -->
     <section class="trends-section">
       <div class="section-header">
-        <h3>Monthly Trends</h3>
-        <p class="section-subtitle">Income, expenses, and savings over the last 6 months</p>
+        <h3>{{ 'reports.monthlyTrends' | translate }}</h3>
+        <p class="section-subtitle">{{ 'reports.incomeExpensesSavings' | translate }}</p>
       </div>
       <div class="chart-container">
         <div class="chart-legend">
@@ -103,15 +103,15 @@
             @for (data of monthlyData; track data.month) {
               <div class="bar-group">
                 <div class="bars">
-                  <div class="bar income" 
+                  <div class="bar income"
                        [style.height.%]="getBarHeight(data.income)"
                        [attr.data-value]="data.income">
                   </div>
-                  <div class="bar expense" 
+                  <div class="bar expense"
                        [style.height.%]="getBarHeight(data.expenses)"
                        [attr.data-value]="data.expenses">
                   </div>
-                  <div class="bar savings" 
+                  <div class="bar savings"
                        [style.height.%]="getBarHeight(data.savings)"
                        [attr.data-value]="data.savings">
                   </div>
@@ -142,8 +142,8 @@
                 <div class="category-info">
                   <span class="category-name">{{ category.name }}</span>
                   <div class="category-bar">
-                    <div class="category-fill" 
-                         [style.width.%]="category.percentage" 
+                    <div class="category-fill"
+                         [style.width.%]="category.percentage"
                          [style.background]="category.color">
                     </div>
                   </div>
@@ -151,8 +151,8 @@
               </div>
               <div class="category-right">
                 <span class="category-amount">{{ category.amount | number:'1.0-0' }} MAD</span>
-                <span class="category-trend" 
-                      [class.up]="category.trend === 'up'" 
+                <span class="category-trend"
+                      [class.up]="category.trend === 'up'"
                       [class.down]="category.trend === 'down'"
                       [class.stable]="category.trend === 'stable'">
                   @if (category.trend === 'up') {
