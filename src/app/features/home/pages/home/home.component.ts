@@ -1,48 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/services';
-import { User } from '../../../../core/models';
+import { TranslateModule } from '@ngx-translate/core';
+import { AuthService, DashboardService } from '../../../../core/services';
+import { User, DashboardData, SpendingCategory, SavingsGoalDisplay, TransactionDisplay } from '../../../../core/models';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
-
-interface SavingsGoal {
-  id: number;
-  name: string;
-  emoji: string;
-  color: string;
-  current: number;
-  target: number;
-  percentage: number;
-}
-
-interface Transaction {
-  id: number;
-  description: string;
-  category: string;
-  emoji: string;
-  amount: number;
-  type: 'income' | 'expense';
-  date: Date;
-}
-
-interface SpendingCategory {
-  name: string;
-  emoji: string;
-  color: string;
-  amount: number;
-  percentage: number;
-}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, RouterLink],
+  imports: [CommonModule, HeaderComponent, RouterLink, TranslateModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
   user: User | null = null;
   currentMonth = '';
+  isLoading = true;
+  errorMessage = '';
 
   // Financial Summary
   balance = 0;
@@ -58,15 +33,18 @@ export class HomeComponent implements OnInit {
   budgetPercentage = 0;
 
   // Savings Goals
-  savingsGoals: SavingsGoal[] = [];
+  savingsGoals: SavingsGoalDisplay[] = [];
 
   // Recent Transactions
-  recentTransactions: Transaction[] = [];
+  recentTransactions: TransactionDisplay[] = [];
 
   // Spending Categories
   spendingCategories: SpendingCategory[] = [];
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly dashboardService: DashboardService
+  ) {
     this.user = this.authService.getCurrentUser();
   }
 
@@ -76,53 +54,70 @@ export class HomeComponent implements OnInit {
   }
 
   loadDashboardData(): void {
-    // Mock data - Replace with actual API calls
-    this.balance = 15420.50;
-    this.balanceChange = 12.5;
-    this.monthlyIncome = 8500.00;
-    this.monthlyExpenses = 5230.75;
-    this.remaining = this.monthlyIncome - this.monthlyExpenses;
-    this.expenseCategories = 6;
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.dashboardService.getDashboard().subscribe({
+      next: (data: DashboardData) => {
+        this.mapDashboardData(data);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading dashboard:', error);
+        this.errorMessage = 'Failed to load dashboard data. Please try again.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private mapDashboardData(data: DashboardData): void {
+    // Financial Summary
+    this.balance = data.totalBalance || 0;
+    this.balanceChange = data.balanceChange || 0;
+    this.monthlyIncome = data.monthlyIncome || 0;
+    this.monthlyExpenses = data.monthlyExpenses || 0;
+    this.remaining = data.remaining || 0;
+    this.expenseCategories = data.expenseCategories || 0;
 
     // Budget
-    this.budgetTotal = 6000;
-    this.budgetSpent = 5230.75;
-    this.budgetPercentage = Math.round((this.budgetSpent / this.budgetTotal) * 100);
+    this.budgetTotal = data.budgetTotal || 0;
+    this.budgetSpent = data.budgetSpent || 0;
+    this.budgetPercentage = data.budgetPercentage || 0;
 
-    // Savings Goals
-    this.savingsGoals = [
-      { id: 1, name: 'New Car', emoji: '🚗', color: '#10b981', current: 24000, target: 40000, percentage: 60 },
-      { id: 2, name: 'Emergency Fund', emoji: '🏦', color: '#3b82f6', current: 8500, target: 10000, percentage: 85 },
-      { id: 3, name: 'Vacation', emoji: '✈️', color: '#f59e0b', current: 3200, target: 8000, percentage: 40 }
-    ];
+    // Map Savings Goals
+    this.savingsGoals = (data.savingsGoals || []).map(goal => ({
+      id: goal.id,
+      name: goal.name,
+      emoji: goal.icon || '🎯',
+      color: goal.color || '#10b981',
+      current: goal.currentAmount || 0,
+      target: goal.targetAmount || 0,
+      percentage: goal.progressPercentage || 0
+    }));
 
-    // Recent Transactions
-    this.recentTransactions = [
-      { id: 1, description: 'Salary', category: 'Income', emoji: '💰', amount: 8500, type: 'income', date: new Date() },
-      { id: 2, description: 'Grocery Shopping', category: 'Food', emoji: '🛒', amount: 450.50, type: 'expense', date: new Date() },
-      { id: 3, description: 'Electricity Bill', category: 'Bills', emoji: '⚡', amount: 320, type: 'expense', date: new Date() },
-      { id: 4, description: 'Freelance Work', category: 'Income', emoji: '💻', amount: 1200, type: 'income', date: new Date() },
-      { id: 5, description: 'Restaurant', category: 'Food', emoji: '🍽️', amount: 180, type: 'expense', date: new Date() }
-    ];
+    // Map Recent Transactions
+    this.recentTransactions = (data.recentTransactions || []).map(tx => ({
+      id: tx.id,
+      description: tx.description,
+      category: tx.category,
+      emoji: tx.emoji || '💸',
+      amount: tx.amount,
+      type: tx.type,
+      date: new Date(tx.date)
+    }));
 
     // Spending Categories
-    this.spendingCategories = [
-      { name: 'Housing', emoji: '🏠', color: '#10b981', amount: 2000, percentage: 38 },
-      { name: 'Food', emoji: '🍔', color: '#f59e0b', amount: 1200, percentage: 23 },
-      { name: 'Transport', emoji: '🚗', color: '#3b82f6', amount: 800, percentage: 15 },
-      { name: 'Bills', emoji: '📄', color: '#8b5cf6', amount: 650, percentage: 12 },
-      { name: 'Entertainment', emoji: '🎬', color: '#ec4899', amount: 400, percentage: 8 },
-      { name: 'Other', emoji: '📦', color: '#6b7280', amount: 180.75, percentage: 4 }
-    ];
+    this.spendingCategories = data.spendingCategories || [];
   }
 
   openAddExpense(): void {
-    // TODO: Navigate to add expense or open modal
+    // Navigate to add expense page
     console.log('Open add expense');
   }
 
   openAddIncome(): void {
-    // TODO: Navigate to add income or open modal
+    // Navigate to add income page
     console.log('Open add income');
   }
 }
+

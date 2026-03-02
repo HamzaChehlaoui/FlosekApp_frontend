@@ -4,21 +4,21 @@
     <!-- Top Bar: Welcome + Quick Actions -->
     <div class="top-bar">
       <div class="welcome-text">
-        <h1>Welcome back, {{ user?.firstName }}! 👋</h1>
-        <p>{{ currentMonth }} • Financial Overview</p>
+        <h1>{{ 'dashboard.welcome' | translate }} {{ user?.firstName }}! 👋</h1>
+        <p>{{ currentMonth }} • {{ 'dashboard.financialOverview' | translate }}</p>
       </div>
       <div class="quick-actions">
         <button class="btn-action btn-expense" (click)="openAddExpense()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          <span>Expense</span>
+          <span>{{ 'dashboard.expense' | translate }}</span>
         </button>
         <button class="btn-action btn-income" (click)="openAddIncome()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          <span>Income</span>
+          <span>{{ 'dashboard.income' | translate }}</span>
         </button>
       </div>
     </div>
@@ -35,7 +35,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Total Balance</span>
+              <span class="card-label">{{ 'dashboard.totalBalance' | translate }}</span>
               <span class="card-value">{{ balance | number:'1.2-2' }} <small>MAD</small></span>
             </div>
           </div>
@@ -56,7 +56,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Income</span>
+              <span class="card-label">{{ 'dashboard.income' | translate }}</span>
               <span class="card-value small">{{ monthlyIncome | number:'1.0-0' }} <small>MAD</small></span>
             </div>
           </div>
@@ -71,7 +71,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Expenses</span>
+              <span class="card-label">{{ 'dashboard.expenses' | translate }}</span>
               <span class="card-value small">{{ monthlyExpenses | number:'1.0-0' }} <small>MAD</small></span>
             </div>
           </div>
@@ -86,7 +86,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Remaining</span>
+              <span class="card-label">{{ 'dashboard.remaining' | translate }}</span>
               <span class="card-value small" [class.text-positive]="remaining >= 0" [class.text-negative]="remaining < 0">
                 {{ remaining | number:'1.0-0' }} <small>MAD</small>
               </span>
@@ -100,10 +100,10 @@
     <section class="budget-section">
       <div class="budget-header">
         <div class="budget-title">
-          <h3>Monthly Budget</h3>
+          <h3>{{ 'budget.monthlyBudget' | translate }}</h3>
           <span class="budget-date">{{ currentMonth }}</span>
         </div>
-        <a routerLink="/budget" class="link-btn">Manage Budget</a>
+        <a routerLink="/budget" class="link-btn">{{ 'budget.manageBudget' | translate }}</a>
       </div>
       <div class="budget-bar-container">
         <div class="budget-amounts">
@@ -130,8 +130,8 @@
       <!-- Left: Transactions -->
       <section class="panel transactions-panel">
         <div class="panel-header">
-          <h3>Recent Transactions</h3>
-          <a routerLink="/expenses" class="link-btn">View All</a>
+          <h3>{{ 'dashboard.recentTransactions' | translate }}</h3>
+          <a routerLink="/expenses" class="link-btn">{{ 'common.viewAll' | translate }}</a>
         </div>
         <div class="transactions-list">
           @for (tx of recentTransactions; track tx.id) {
@@ -154,8 +154,8 @@
       <!-- Middle: Savings Goals -->
       <section class="panel savings-panel">
         <div class="panel-header">
-          <h3>Savings Goals</h3>
-          <a routerLink="/savings" class="link-btn">View All</a>
+          <h3>{{ 'dashboard.savingsGoals' | translate }}</h3>
+          <a routerLink="/savings" class="link-btn">{{ 'common.viewAll' | translate }}</a>
         </div>
         <div class="goals-list">
           @for (goal of savingsGoals; track goal.id) {
@@ -181,7 +181,7 @@
       <!-- Right: Categories -->
       <section class="panel categories-panel">
         <div class="panel-header">
-          <h3>Spending Categories</h3>
+          <h3>{{ 'dashboard.spendingCategories' | translate }}</h3>
         </div>
         <div class="categories-list">
           @for (cat of spendingCategories; track cat.name) {
