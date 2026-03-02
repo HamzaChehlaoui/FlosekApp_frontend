@@ -20,13 +20,13 @@
       </div>
 
       <div class="card-header">
-        <h2>Welcome back</h2>
-        <p>Enter your credentials to access your account</p>
+        <h2>{{ 'auth.login.title' | translate }}</h2>
+        <p>{{ 'auth.login.subtitle' | translate }}</p>
       </div>
 
       <form (ngSubmit)="onSubmit()" class="auth-form">
         <div class="form-group">
-          <label for="email">Email address</label>
+          <label for="email">{{ 'auth.login.email' | translate }}</label>
           <div class="input-wrapper">
             <span class="input-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -47,7 +47,7 @@
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">{{ 'auth.login.password' | translate }}</label>
           <div class="input-wrapper">
             <span class="input-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -81,7 +81,7 @@
         </div>
 
         <div class="form-options">
-          <a routerLink="/auth/forgot-password" class="forgot-link">Forgot password?</a>
+          <a routerLink="/auth/forgot-password" class="forgot-link">{{ 'auth.login.forgotPassword' | translate }}</a>
         </div>
 
         @if (errorMessage) {
@@ -96,9 +96,9 @@
         <button type="submit" class="btn-primary" [disabled]="isLoading">
           @if (isLoading) {
             <span class="spinner"></span>
-            <span>Signing in...</span>
+            <span>{{ 'auth.login.signingIn' | translate }}</span>
           } @else {
-            <span>Sign in</span>
+            <span>{{ 'auth.login.submit' | translate }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06l6.22-6.22H3a.75.75 0 010-1.5h16.19l-6.22-6.22a.75.75 0 010-1.06z" clip-rule="evenodd"/>
             </svg>
@@ -107,14 +107,14 @@
       </form>
 
       <div class="auth-footer">
-        <p>Don't have an account? <a routerLink="/auth/register">Create account</a></p>
+        <p>{{ 'auth.login.noAccount' | translate }} <a routerLink="/auth/register">{{ 'auth.login.createAccount' | translate }}</a></p>
       </div>
 
       <div class="security-badge">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
           <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd"/>
         </svg>
-        <span>Your data is encrypted and protected</span>
+        <span>{{ 'auth.securityBadge' | translate }}</span>
       </div>
     </div>
   </div>
