@@ -10,15 +10,15 @@
           </svg>
         </div>
         <div class="page-title">
-          <h1>Budget Planner</h1>
-          <p class="subtitle">{{ currentMonth }} • Manage your monthly budget</p>
+          <h1>{{ 'budget.title' | translate }}</h1>
+          <p class="subtitle">{{ currentMonth }} • {{ 'budget.manageBudget' | translate }}</p>
         </div>
       </div>
       <button class="add-btn" (click)="openAddBudget()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
-        <span>Add Budget</span>
+        <span>{{ 'budget.addBudget' | translate }}</span>
       </button>
     </header>
 
@@ -34,7 +34,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Total Budget</span>
+              <span class="card-label">{{ 'budget.totalBudget' | translate }}</span>
               <span class="card-value">{{ totalBudget | number:'1.0-0' }} <small>MAD</small></span>
             </div>
           </div>
@@ -55,7 +55,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Total Spent</span>
+              <span class="card-label">{{ 'budget.totalSpent' | translate }}</span>
               <span class="card-value small">{{ totalSpent | number:'1.0-0' }} <small>MAD</small></span>
             </div>
           </div>
@@ -70,7 +70,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Remaining</span>
+              <span class="card-label">{{ 'dashboard.remaining' | translate }}</span>
               <span class="card-value small" [class.text-positive]="totalRemaining >= 0" [class.text-negative]="totalRemaining < 0">
                 {{ totalRemaining | number:'1.0-0' }} <small>MAD</small>
               </span>
@@ -88,7 +88,7 @@
               </svg>
             </div>
             <div class="card-data">
-              <span class="card-label">Categories</span>
+              <span class="card-label">{{ 'budget.categories' | translate }}</span>
               <span class="card-value small">{{ budgetCategories.length }}</span>
             </div>
           </div>
@@ -100,7 +100,7 @@
     <section class="budget-overview-section">
       <div class="overview-header">
         <div class="overview-title">
-          <h3>Monthly Budget Overview</h3>
+          <h3>{{ 'budget.monthlyOverview' | translate }}</h3>
           <span class="overview-date">{{ currentMonth }}</span>
         </div>
       </div>
@@ -127,8 +127,8 @@
     <!-- Budget Categories Grid -->
     <section class="categories-section">
       <div class="section-header">
-        <h3>Budget Categories</h3>
-        <p class="section-subtitle">Track spending across different categories</p>
+        <h3>{{ 'budget.budgetCategories' | translate }}</h3>
+        <p class="section-subtitle">{{ 'budget.trackSpending' | translate }}</p>
       </div>
       <div class="categories-grid">
         @for (category of budgetCategories; track category.id) {
@@ -164,7 +164,7 @@
                 </div>
               </div>
               <div class="progress-info">
-                <span class="percentage-text" 
+                <span class="percentage-text"
                       [class.safe]="getBudgetStatus(category.percentage) === 'safe'"
                       [class.warning]="getBudgetStatus(category.percentage) === 'warning'"
                       [class.danger]="getBudgetStatus(category.percentage) === 'danger'">
@@ -178,37 +178,12 @@
       </div>
     </section>
 
-    <!-- Bottom Grid: Activities + Tips -->
+    <!-- Bottom Grid: Tips -->
     <div class="bottom-grid">
-      <!-- Recent Activities -->
-      <section class="panel activities-panel">
-        <div class="panel-header">
-          <h3>Recent Budget Activities</h3>
-          <a routerLink="/expenses" class="link-btn">View All</a>
-        </div>
-        <div class="activities-list">
-          @for (activity of recentActivities; track activity.id) {
-            <div class="activity-row">
-              <div class="activity-left">
-                <div class="activity-indicator" [style.background]="activity.categoryColor"></div>
-                <div class="activity-details">
-                  <span class="activity-name">{{ activity.description }}</span>
-                  <span class="activity-category">{{ activity.category }}</span>
-                </div>
-              </div>
-              <div class="activity-right">
-                <span class="activity-amount">-{{ activity.amount | number:'1.0-0' }} MAD</span>
-                <span class="activity-date">{{ formatDate(activity.date) }}</span>
-              </div>
-            </div>
-          }
-        </div>
-      </section>
-
       <!-- Budget Tips -->
       <section class="panel tips-panel">
         <div class="panel-header">
-          <h3>Budget Tips</h3>
+          <h3>{{ 'budget.budgetTips' | translate }}</h3>
         </div>
         <div class="tips-list">
           @for (tip of budgetTips; track tip.title) {
