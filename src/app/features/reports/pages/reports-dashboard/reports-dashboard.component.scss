@@ -3,7 +3,6 @@
 :host {
     display: block;
     min-height: calc(100vh - 56px);
-    overflow-y: auto;
 }
 
 .reports-page {
@@ -408,8 +407,8 @@
     justify-content: center;
     flex-shrink: 0;
 
-    .emoji {
-        font-size: 18px;
+    .material-symbols-outlined {
+        font-size: 20px;
     }
 }
 

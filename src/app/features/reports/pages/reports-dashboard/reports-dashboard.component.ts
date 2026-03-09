@@ -13,7 +13,7 @@ interface MonthlyData {
 
 interface CategorySpending {
   name: string;
-  emoji: string;
+  icon: string;
   color: string;
   amount: number;
   percentage: number;
@@ -80,12 +80,12 @@ export class ReportsDashboardComponent implements OnInit {
 
     // Category Spending
     this.categorySpending = [
-      { name: 'Housing', emoji: '🏠', color: '#10b981', amount: 2000, percentage: 38, trend: 'stable', change: 0 },
-      { name: 'Food', emoji: '🍔', color: '#f59e0b', amount: 1200, percentage: 23, trend: 'up', change: 8 },
-      { name: 'Transport', emoji: '🚗', color: '#3b82f6', amount: 800, percentage: 15, trend: 'down', change: -5 },
-      { name: 'Bills', emoji: '📄', color: '#8b5cf6', amount: 650, percentage: 12, trend: 'stable', change: 2 },
-      { name: 'Entertainment', emoji: '🎬', color: '#ec4899', amount: 400, percentage: 8, trend: 'up', change: 12 },
-      { name: 'Other', emoji: '📦', color: '#6b7280', amount: 180, percentage: 4, trend: 'down', change: -3 }
+      { name: 'Housing', icon: 'home', color: '#10b981', amount: 2000, percentage: 38, trend: 'stable', change: 0 },
+      { name: 'Food', icon: 'restaurant', color: '#f59e0b', amount: 1200, percentage: 23, trend: 'up', change: 8 },
+      { name: 'Transport', icon: 'directions_car', color: '#3b82f6', amount: 800, percentage: 15, trend: 'down', change: -5 },
+      { name: 'Bills', icon: 'receipt_long', color: '#8b5cf6', amount: 650, percentage: 12, trend: 'stable', change: 2 },
+      { name: 'Entertainment', icon: 'movie', color: '#ec4899', amount: 400, percentage: 8, trend: 'up', change: 12 },
+      { name: 'Other', icon: 'category', color: '#6b7280', amount: 180, percentage: 4, trend: 'down', change: -3 }
     ];
 
     // Top Expenses
