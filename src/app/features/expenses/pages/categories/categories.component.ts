@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { CategoryService, IconService } from '../../../../core/services';
 import { CategoryRequest } from '../../../../core/services/category.service';
 import { Category } from '../../../../core/models';
@@ -10,7 +11,7 @@ import { IconOption } from '../../../../core/services/icon.service';
 @Component({
   selector: 'app-categories',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule, HeaderComponent],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss'
 })
