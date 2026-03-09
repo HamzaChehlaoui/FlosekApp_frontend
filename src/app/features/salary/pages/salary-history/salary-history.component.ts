@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { SalaryService } from '../../../../core/services';
 import { Salary } from '../../../../core/models';
 
 @Component({
   selector: 'app-salary-history',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, HeaderComponent],
   templateUrl: './salary-history.component.html',
   styleUrl: './salary-history.component.scss'
 })

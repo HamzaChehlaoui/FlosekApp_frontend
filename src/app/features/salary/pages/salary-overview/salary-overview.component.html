@@ -1,3 +1,4 @@
+<app-header></app-header>
 <div class="salary-container">
   <div class="page-header">
     <div class="header-content">
@@ -80,7 +81,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (salary of salaries; track salary.id) {
+            @for (salary of paginatedSalaries; track salary.id) {
               <tr [class.current]="salary.isCurrent">
                 <td class="amount-cell">
                   {{ formatCurrency(salary.amount, salary.currency) }}
@@ -107,6 +108,48 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="pagination">
+          <div class="pagination-info">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ currentPage * pageSize > salaries.length ? salaries.length : currentPage * pageSize }} of {{ salaries.length }} entries
+          </div>
+          <div class="pagination-controls">
+            <button
+              class="pagination-btn"
+              (click)="prevPage()"
+              [disabled]="currentPage === 1"
+              title="Previous"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+
+            @for (page of pageNumbers; track page) {
+              <button
+                class="pagination-btn page-number"
+                [class.active]="page === currentPage"
+                (click)="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button
+              class="pagination-btn"
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages"
+              title="Next"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
     }
   </div>
 </div>

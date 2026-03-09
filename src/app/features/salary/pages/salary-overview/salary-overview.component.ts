@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { SalaryService } from '../../../../core/services';
 import { SalaryRequest } from '../../../../core/services/salary.service';
 import { Salary } from '../../../../core/models';
@@ -9,7 +10,7 @@ import { Salary } from '../../../../core/models';
 @Component({
   selector: 'app-salary-overview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, HeaderComponent],
   templateUrl: './salary-overview.component.html',
   styleUrl: './salary-overview.component.scss'
 })
@@ -23,6 +24,28 @@ export class SalaryOverviewComponent implements OnInit {
   successMessage = '';
   showModal = false;
   editingSalary: Salary | null = null;
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 10;
+
+  get totalPages(): number {
+    return Math.ceil(this.salaries.length / this.pageSize);
+  }
+
+  get paginatedSalaries(): Salary[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.salaries.slice(start, end);
+  }
+
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -213,4 +236,23 @@ export class SalaryOverviewComponent implements OnInit {
   get currency() { return this.salaryForm.get('currency'); }
   get effectiveDate() { return this.salaryForm.get('effectiveDate'); }
   get description() { return this.salaryForm.get('description'); }
+
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
 }
