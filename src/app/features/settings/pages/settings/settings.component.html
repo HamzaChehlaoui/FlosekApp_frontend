@@ -1,1 +1,209 @@
-<p>settings works!</p>
+<app-header></app-header>
+
+<div class="settings-container">
+  <div class="page-header">
+    <h1>{{ 'settings.title' | translate }}</h1>
+    <p>Manage your app preferences</p>
+  </div>
+
+  <!-- Success/Error Messages -->
+  @if (successMessage) {
+    <div class="alert alert-success">
+      <span class="alert-icon">✅</span>
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Language Section -->
+  <section class="settings-section">
+    <h2 class="section-title">
+      <span class="section-icon">🌍</span>
+      {{ 'settings.language' | translate }}
+    </h2>
+    <div class="language-grid">
+      @for (lang of languages; track lang.code) {
+        <button
+          class="language-option"
+          [class.selected]="currentLanguage?.code === lang.code"
+          (click)="onLanguageChange(lang.code)"
+        >
+          <span class="lang-flag">{{ lang.flag }}</span>
+          <span class="lang-name">{{ lang.nativeName }}</span>
+          @if (currentLanguage?.code === lang.code) {
+            <span class="check-icon">✓</span>
+          }
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Currency Section -->
+  <section class="settings-section">
+    <h2 class="section-title">
+      <span class="section-icon">💰</span>
+      {{ 'settings.currency' | translate }}
+    </h2>
+    <div class="select-wrapper">
+      <select [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+        @for (currency of currencies; track currency.code) {
+          <option [value]="currency.code">
+            {{ currency.symbol }} {{ currency.name }} ({{ currency.code }})
+          </option>
+        }
+      </select>
+    </div>
+  </section>
+
+  <!-- Theme Section -->
+  <section class="settings-section">
+    <h2 class="section-title">
+      <span class="section-icon">🎨</span>
+      {{ 'settings.theme' | translate }}
+    </h2>
+    <div class="theme-grid">
+      @for (theme of themes; track theme.id) {
+        <button
+          class="theme-option"
+          [class.selected]="selectedTheme === theme.id"
+          (click)="onThemeChange(theme.id)"
+        >
+          <span class="theme-icon">{{ theme.icon }}</span>
+          <span class="theme-name">{{ theme.name }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Notifications Section -->
+  <section class="settings-section">
+    <h2 class="section-title">
+      <span class="section-icon">🔔</span>
+      {{ 'settings.notifications' | translate }}
+    </h2>
+    <div class="notifications-list">
+      <label class="toggle-item">
+        <span class="toggle-info">
+          <span class="toggle-title">Budget Alerts</span>
+          <span class="toggle-desc">Get notified when you exceed your budget</span>
+        </span>
+        <input
+          type="checkbox"
+          [(ngModel)]="notifications.budgetAlerts"
+          (change)="onNotificationChange()"
+        />
+        <span class="toggle-switch"></span>
+      </label>
+
+      <label class="toggle-item">
+        <span class="toggle-info">
+          <span class="toggle-title">Savings Reminders</span>
+          <span class="toggle-desc">Weekly reminders to contribute to your goals</span>
+        </span>
+        <input
+          type="checkbox"
+          [(ngModel)]="notifications.savingsReminders"
+          (change)="onNotificationChange()"
+        />
+        <span class="toggle-switch"></span>
+      </label>
+
+      <label class="toggle-item">
+        <span class="toggle-info">
+          <span class="toggle-title">Weekly Report</span>
+          <span class="toggle-desc">Receive weekly spending summary via email</span>
+        </span>
+        <input
+          type="checkbox"
+          [(ngModel)]="notifications.weeklyReport"
+          (change)="onNotificationChange()"
+        />
+        <span class="toggle-switch"></span>
+      </label>
+
+      <label class="toggle-item">
+        <span class="toggle-info">
+          <span class="toggle-title">Push Notifications</span>
+          <span class="toggle-desc">Receive browser push notifications</span>
+        </span>
+        <input
+          type="checkbox"
+          [(ngModel)]="notifications.pushNotifications"
+          (change)="onNotificationChange()"
+        />
+        <span class="toggle-switch"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Data & Privacy Section -->
+  <section class="settings-section">
+    <h2 class="section-title">
+      <span class="section-icon">🔒</span>
+      Data & Privacy
+    </h2>
+    <div class="data-actions">
+      <button class="action-btn" (click)="exportData()">
+        <span class="btn-icon">📤</span>
+        <span class="btn-content">
+          <span class="btn-title">Export My Data</span>
+          <span class="btn-desc">Download all your data as JSON</span>
+        </span>
+      </button>
+
+      <button class="action-btn" (click)="clearLocalData()">
+        <span class="btn-icon">🗑️</span>
+        <span class="btn-content">
+          <span class="btn-title">Clear Local Data</span>
+          <span class="btn-desc">Remove cached data from this device</span>
+        </span>
+      </button>
+
+      <button class="action-btn danger" (click)="confirmDeleteAccount()">
+        <span class="btn-icon">⚠️</span>
+        <span class="btn-content">
+          <span class="btn-title">Delete Account</span>
+          <span class="btn-desc">Permanently delete your account and data</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Logout Button -->
+  <div class="logout-section">
+    <button class="logout-btn" (click)="logout()">
+      <span>🚪</span>
+      {{ 'nav.logout' | translate }}
+    </button>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteConfirm) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-icon danger">⚠️</div>
+      <h3>Delete Account?</h3>
+      <p>This action cannot be undone. All your data will be permanently deleted.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="cancelDelete()" [disabled]="isDeleting">
+          Cancel
+        </button>
+        <button class="btn btn-danger" (click)="deleteAccount()" [disabled]="isDeleting">
+          @if (isDeleting) {
+            <span class="spinner-small"></span>
+            Deleting...
+          } @else {
+            Delete Account
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
