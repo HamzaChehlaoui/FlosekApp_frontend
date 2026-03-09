@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { ExpenseService, CategoryService } from '../../../../core/services';
 import { ExpenseRequest } from '../../../../core/services/expense.service';
 import { Category } from '../../../../core/models';
@@ -10,7 +11,7 @@ import { Category } from '../../../../core/models';
 @Component({
   selector: 'app-add-expense',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, HeaderComponent],
   templateUrl: './add-expense.component.html',
   styleUrl: './add-expense.component.scss'
 })
@@ -23,14 +24,23 @@ export class AddExpenseComponent implements OnInit {
   successMessage = '';
   isEditMode = false;
   expenseId: string | null = null;
+  showCategoryDropdown = false;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly expenseService: ExpenseService,
     private readonly categoryService: CategoryService,
     private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly elementRef: ElementRef
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.showCategoryDropdown = false;
+    }
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -160,6 +170,25 @@ export class AddExpenseComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['/expenses']);
+  }
+
+  getSelectedCategoryIcon(): string {
+    const categoryId = this.categoryId?.value;
+    if (!categoryId) return 'category';
+    const category = this.categories.find(c => c.id === categoryId);
+    return category?.icon || 'category';
+  }
+
+  getSelectedCategoryName(): string {
+    const categoryId = this.categoryId?.value;
+    if (!categoryId) return '';
+    const category = this.categories.find(c => c.id === categoryId);
+    return category?.name || '';
+  }
+
+  selectCategory(category: Category): void {
+    this.expenseForm.patchValue({ categoryId: category.id });
+    this.showCategoryDropdown = false;
   }
 
   // Form field getters for template

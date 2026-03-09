@@ -1,3 +1,4 @@
+<app-header></app-header>
 <div class="add-expense-container">
   <div class="page-header">
     <h1>{{ isEditMode ? ('expenses.editExpense' | translate) : ('expenses.addNewExpense' | translate) }}</h1>
@@ -87,19 +88,33 @@
 
       <!-- Category -->
       <div class="form-group">
-        <label for="categoryId">{{ 'expenses.category' | translate }} *</label>
-        <select
-          id="categoryId"
-          formControlName="categoryId"
-          [class.invalid]="categoryId?.invalid && categoryId?.touched"
-        >
-          <option value="">Select a category</option>
-          @for (category of categories; track category.id) {
-            <option [value]="category.id">
-              {{ category.icon }} {{ category.name }}
-            </option>
+        <label>{{ 'expenses.category' | translate }} *</label>
+        <div class="custom-dropdown" [class.open]="showCategoryDropdown" [class.invalid]="categoryId?.invalid && categoryId?.touched">
+          <div class="dropdown-trigger" (click)="showCategoryDropdown = !showCategoryDropdown">
+            @if (categoryId?.value) {
+              <span class="dropdown-icon material-symbols-outlined">{{ getSelectedCategoryIcon() }}</span>
+              <span class="dropdown-text">{{ getSelectedCategoryName() }}</span>
+            } @else {
+              <span class="dropdown-text placeholder">Select a category</span>
+            }
+            <span class="dropdown-arrow material-symbols-outlined">expand_more</span>
+          </div>
+          @if (showCategoryDropdown) {
+            <div class="dropdown-menu">
+              @for (category of categories; track category.id) {
+                <div class="dropdown-item"
+                     [class.selected]="categoryId?.value === category.id"
+                     (click)="selectCategory(category)">
+                  <span class="item-icon material-symbols-outlined" [style.color]="category.color">{{ category.icon }}</span>
+                  <span class="item-name">{{ category.name }}</span>
+                  @if (categoryId?.value === category.id) {
+                    <span class="item-check material-symbols-outlined">check</span>
+                  }
+                </div>
+              }
+            </div>
           }
-        </select>
+        </div>
         @if (categoryId?.invalid && categoryId?.touched) {
           <span class="error-text">Category is required</span>
         }
