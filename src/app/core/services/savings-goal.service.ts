@@ -18,6 +18,17 @@ export interface ContributionRequest {
   note?: string;
 }
 
+export interface ContributionResponse {
+  id: string;
+  savingsGoalId: string;
+  goalName: string;
+  goalColor: string;
+  amount: number;
+  note: string;
+  contributionDate: string;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -66,6 +77,15 @@ export class SavingsGoalService {
    */
   addContribution(id: string, contribution: ContributionRequest): Observable<SavingsGoal> {
     return this.http.post<SavingsGoal>(`${this.apiUrl}/${id}/contribute`, contribution);
+  }
+
+  /**
+   * Get recent contributions for the authenticated user
+   */
+  getRecentContributions(limit: number = 5): Observable<ContributionResponse[]> {
+    return this.http.get<ContributionResponse[]>(`${this.apiUrl}/contributions/recent`, {
+      params: { limit: limit.toString() }
+    });
   }
 
   /**

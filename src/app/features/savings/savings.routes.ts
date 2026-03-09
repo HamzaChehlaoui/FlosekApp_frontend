@@ -8,5 +8,9 @@ export const savingsRoutes: Routes = [
     {
         path: 'add',
         loadComponent: () => import('./pages/add-goal/add-goal.component').then(m => m.AddGoalComponent)
+    },
+    {
+        path: 'edit/:id',
+        loadComponent: () => import('./pages/add-goal/add-goal.component').then(m => m.AddGoalComponent)
     }
 ];

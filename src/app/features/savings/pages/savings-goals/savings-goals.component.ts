@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { SavingsGoalService } from '../../../../core/services';
@@ -8,7 +10,7 @@ import { SavingsGoal } from '../../../../core/models';
 interface SavingsGoalDisplay {
   id: string;
   name: string;
-  emoji: string;
+  icon: string;
   color: string;
   current: number;
   target: number;
@@ -36,7 +38,7 @@ interface RecentContribution {
 @Component({
   selector: 'app-savings-goals',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, HeaderComponent, TranslateModule],
   templateUrl: './savings-goals.component.html',
   styleUrl: './savings-goals.component.scss'
 })
@@ -44,6 +46,24 @@ export class SavingsGoalsComponent implements OnInit {
   // Loading & Error states
   isLoading = true;
   errorMessage = '';
+
+  // Contribution Modal
+  showContributionModal = false;
+  contributionAmount: number | null = null;
+  contributionNote = '';
+  selectedGoalForContribution: SavingsGoalDisplay | null = null;
+  isSubmittingContribution = false;
+
+  // Computed: remaining amount to reach goal
+  get remainingAmount(): number {
+    if (!this.selectedGoalForContribution) return 0;
+    return Math.max(0, this.selectedGoalForContribution.target - this.selectedGoalForContribution.current);
+  }
+
+  get isOverContribution(): boolean {
+    if (!this.contributionAmount || !this.selectedGoalForContribution) return false;
+    return this.contributionAmount > this.remainingAmount;
+  }
 
   // Summary Stats
   totalSaved = 0;
@@ -87,10 +107,33 @@ export class SavingsGoalsComponent implements OnInit {
     }
   ];
 
-  constructor(private readonly savingsGoalService: SavingsGoalService) {}
+  constructor(
+    private readonly savingsGoalService: SavingsGoalService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.loadRecentContributions();
     this.loadSavingsData();
+  }
+
+  private loadRecentContributions(): void {
+    this.savingsGoalService.getRecentContributions(5).subscribe({
+      next: (contributions) => {
+        this.recentContributions = contributions.map(c => ({
+          id: c.id,
+          goalName: c.goalName,
+          goalColor: c.goalColor,
+          amount: c.amount,
+          note: c.note || 'Contribution',
+          date: new Date(c.contributionDate)
+        }));
+      },
+      error: (error) => {
+        console.error('Error loading recent contributions:', error);
+        this.recentContributions = [];
+      }
+    });
   }
 
   loadSavingsData(): void {
@@ -122,7 +165,7 @@ export class SavingsGoalsComponent implements OnInit {
     return {
       id: goal.id,
       name: goal.name,
-      emoji: goal.icon || '🎯',
+      icon: goal.icon || 'savings',
       color: goal.color || '#10b981',
       current: goal.currentAmount,
       target: goal.targetAmount,
@@ -173,36 +216,69 @@ export class SavingsGoalsComponent implements OnInit {
   }
 
   openAddGoal(): void {
-    // Navigate to add goal page or open modal
-    console.log('Open add goal');
+    this.router.navigate(['/savings/add']);
   }
 
   addContribution(goalId: string): void {
-    const amount = prompt('Enter contribution amount:');
-    if (amount && !Number.isNaN(Number(amount))) {
-      this.savingsGoalService.addContribution(goalId, { amount: Number(amount) }).subscribe({
-        next: (updatedGoal) => {
-          const index = this.activeGoals.findIndex(g => g.id === goalId);
-          if (index !== -1) {
-            this.activeGoals[index] = this.mapGoalToDisplay(updatedGoal, 'active');
-            if (updatedGoal.isCompleted) {
-              this.completedGoals.push(this.mapGoalToDisplay(updatedGoal, 'completed'));
-              this.activeGoals = this.activeGoals.filter(g => g.id !== goalId);
-            }
-          }
-          this.calculateSummary();
-        },
-        error: (error) => {
-          console.error('Error adding contribution:', error);
-          alert('Failed to add contribution. Please try again.');
-        }
-      });
+    const goal = this.activeGoals.find(g => g.id === goalId);
+    if (goal) {
+      this.selectedGoalForContribution = goal;
+      this.contributionAmount = null;
+      this.contributionNote = '';
+      this.showContributionModal = true;
     }
   }
 
+  closeContributionModal(): void {
+    this.showContributionModal = false;
+    this.selectedGoalForContribution = null;
+    this.contributionAmount = null;
+    this.contributionNote = '';
+    this.isSubmittingContribution = false;
+  }
+
+  fillRemainingAmount(): void {
+    if (this.selectedGoalForContribution) {
+      this.contributionAmount = this.remainingAmount;
+    }
+  }
+
+  submitContribution(): void {
+    if (!this.selectedGoalForContribution || !this.contributionAmount || this.contributionAmount <= 0) {
+      return;
+    }
+
+    this.isSubmittingContribution = true;
+    const goalId = this.selectedGoalForContribution.id;
+
+    this.savingsGoalService.addContribution(goalId, {
+      amount: this.contributionAmount,
+      note: this.contributionNote || undefined
+    }).subscribe({
+      next: (updatedGoal) => {
+        const index = this.activeGoals.findIndex(g => g.id === goalId);
+        if (index !== -1) {
+          this.activeGoals[index] = this.mapGoalToDisplay(updatedGoal, 'active');
+          if (updatedGoal.isCompleted) {
+            this.completedGoals.push(this.mapGoalToDisplay(updatedGoal, 'completed'));
+            this.activeGoals = this.activeGoals.filter(g => g.id !== goalId);
+          }
+        }
+        // Reload recent contributions from API
+        this.loadRecentContributions();
+
+        this.calculateSummary();
+        this.closeContributionModal();
+      },
+      error: (error) => {
+        console.error('Error adding contribution:', error);
+        this.isSubmittingContribution = false;
+      }
+    });
+  }
+
   editGoal(goalId: string): void {
-    // Navigate to edit goal page or open modal
-    console.log('Edit goal:', goalId);
+    this.router.navigate(['/savings/edit', goalId]);
   }
 
   deleteGoal(goalId: string): void {

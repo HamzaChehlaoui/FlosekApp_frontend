@@ -104,7 +104,7 @@
           <div class="goal-card" [style.--goal-color]="goal.color">
             <div class="goal-header">
               <div class="goal-icon" [style.background]="goal.color + '15'" [style.color]="goal.color">
-                <span class="emoji">{{ goal.emoji }}</span>
+                <span class="material-symbols-outlined">{{ goal.icon }}</span>
               </div>
               <div class="goal-info">
                 <h4>{{ goal.name }}</h4>
@@ -195,7 +195,7 @@
           @for (goal of completedGoals; track goal.id) {
             <div class="completed-row">
               <div class="completed-icon" [style.background]="goal.color + '15'" [style.color]="goal.color">
-                <span class="emoji">{{ goal.emoji }}</span>
+                <span class="material-symbols-outlined">{{ goal.icon }}</span>
               </div>
               <div class="completed-info">
                 <span class="completed-name">{{ goal.name }}</span>
@@ -231,3 +231,115 @@
     </div>
   </main>
 </div>
+
+<!-- Contribution Modal -->
+@if (showContributionModal && selectedGoalForContribution) {
+  <div class="modal-overlay" (click)="closeContributionModal()" tabindex="-1" (keydown.escape)="closeContributionModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-goal-icon" [style.background]="selectedGoalForContribution.color + '15'" [style.color]="selectedGoalForContribution.color">
+            <span class="material-symbols-outlined">{{ selectedGoalForContribution.icon }}</span>
+          </div>
+          <div>
+            <h2>Add Contribution</h2>
+            <p class="modal-goal-name">{{ selectedGoalForContribution.name }}</p>
+          </div>
+        </div>
+        <button class="close-btn" (click)="closeContributionModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Current Progress -->
+        <div class="progress-summary">
+          <div class="progress-amounts">
+            <span class="current">{{ selectedGoalForContribution.current | number:'1.0-0' }} MAD</span>
+            <span class="separator">of</span>
+            <span class="target">{{ selectedGoalForContribution.target | number:'1.0-0' }} MAD</span>
+          </div>
+          <div class="progress-bar-mini">
+            <div class="fill" [style.width.%]="selectedGoalForContribution.percentage" [style.background]="selectedGoalForContribution.color"></div>
+          </div>
+          <span class="progress-text">{{ selectedGoalForContribution.percentage }}% complete</span>
+        </div>
+
+        <!-- Amount Input -->
+        <div class="form-group">
+          <div class="amount-header">
+            <label for="contributionAmount">Amount (MAD) *</label>
+            @if (remainingAmount > 0) {
+              <button type="button" class="fill-remaining-btn" (click)="fillRemainingAmount()" [style.color]="selectedGoalForContribution.color">
+                Fill remaining ({{ remainingAmount | number:'1.0-0' }} MAD)
+              </button>
+            }
+          </div>
+          <div class="input-wrapper">
+            <span class="currency-symbol">MAD</span>
+            <input
+              type="number"
+              id="contributionAmount"
+              [(ngModel)]="contributionAmount"
+              placeholder="0.00"
+              step="0.01"
+              min="1"
+              class="amount-input"
+              [class.warning]="isOverContribution"
+            />
+          </div>
+          @if (contributionAmount && contributionAmount > 0) {
+            @if (isOverContribution) {
+              <div class="helper-text warning-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                <span>This exceeds the remaining {{ remainingAmount | number:'1.0-0' }} MAD. New total will be {{ (selectedGoalForContribution.current + contributionAmount) | number:'1.0-0' }} MAD ({{ selectedGoalForContribution.target | number:'1.0-0' }} MAD target).</span>
+              </div>
+            } @else {
+              <span class="helper-text positive">
+                New total: {{ (selectedGoalForContribution.current + contributionAmount) | number:'1.0-0' }} MAD
+              </span>
+            }
+          }
+        </div>
+
+        <!-- Note Input -->
+        <div class="form-group">
+          <label for="contributionNote">Note (optional)</label>
+          <input
+            type="text"
+            id="contributionNote"
+            [(ngModel)]="contributionNote"
+            placeholder="e.g., Monthly savings, Bonus..."
+            class="note-input"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeContributionModal()">
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary"
+          [style.background]="selectedGoalForContribution.color"
+          (click)="submitContribution()"
+          [disabled]="!contributionAmount || contributionAmount <= 0 || isSubmittingContribution"
+        >
+          @if (isSubmittingContribution) {
+            <span class="spinner-small"></span>
+            Saving...
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Add Contribution
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
