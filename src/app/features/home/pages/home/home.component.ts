@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService, DashboardService } from '../../../../core/services';
 import { User, DashboardData, SpendingCategory, SavingsGoalDisplay, TransactionDisplay } from '../../../../core/models';
@@ -43,7 +43,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly dashboardService: DashboardService
+    private readonly dashboardService: DashboardService,
+    private readonly router: Router
   ) {
     this.user = this.authService.getCurrentUser();
   }
@@ -88,7 +89,7 @@ export class HomeComponent implements OnInit {
     this.savingsGoals = (data.savingsGoals || []).map(goal => ({
       id: goal.id,
       name: goal.name,
-      emoji: goal.icon || '🎯',
+      icon: goal.icon || 'savings',
       color: goal.color || '#10b981',
       current: goal.currentAmount || 0,
       target: goal.targetAmount || 0,
@@ -100,24 +101,28 @@ export class HomeComponent implements OnInit {
       id: tx.id,
       description: tx.description,
       category: tx.category,
-      emoji: tx.emoji || '💸',
+      icon: tx.icon || 'payments',
       amount: tx.amount,
       type: tx.type,
       date: new Date(tx.date)
     }));
 
     // Spending Categories
-    this.spendingCategories = data.spendingCategories || [];
+    this.spendingCategories = (data.spendingCategories || []).map((cat: any) => ({
+      name: cat.name,
+      icon: cat.icon || cat.emoji || 'category',
+      color: cat.color || '#6b7280',
+      amount: cat.amount,
+      percentage: cat.percentage
+    }));
   }
 
   openAddExpense(): void {
-    // Navigate to add expense page
-    console.log('Open add expense');
+    this.router.navigate(['/expenses/add']);
   }
 
   openAddIncome(): void {
-    // Navigate to add income page
-    console.log('Open add income');
+    this.router.navigate(['/salary']);
   }
 }
 
