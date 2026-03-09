@@ -1,1 +1,202 @@
-<p>add-goal works!</p>
+<app-header></app-header>
+<div class="add-goal-container">
+  <div class="page-header">
+    <h1>{{ isEditMode ? ('savings.editGoal' | translate) : ('savings.addGoal' | translate) }}</h1>
+    <p>{{ 'savings.trackGoals' | translate }}</p>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>{{ 'common.loading' | translate }}</p>
+    </div>
+  }
+
+  <!-- Messages -->
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="alert alert-success">
+      <span class="alert-icon">✅</span>
+      {{ successMessage }}
+    </div>
+  }
+
+  <!-- Goal Form -->
+  @if (!isLoading) {
+    <form [formGroup]="goalForm" (ngSubmit)="onSubmit()" class="goal-form">
+      <!-- Goal Preview -->
+      <div class="goal-preview" [style.borderColor]="selectedColor">
+        <div class="preview-icon" [style.backgroundColor]="selectedColor + '20'" [style.color]="selectedColor">
+          <span class="material-symbols-outlined">{{ selectedIcon }}</span>
+        </div>
+        <div class="preview-content">
+          <h3>{{ goalForm.get('name')?.value || 'Goal Name' }}</h3>
+          <p>{{ (goalForm.get('targetAmount')?.value | number:'1.2-2') || '0.00' }} MAD</p>
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name">{{ 'savings.form.name' | translate }} *</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="e.g., New Car, Vacation, Emergency Fund"
+          [class.invalid]="name?.invalid && name?.touched"
+        />
+        @if (name?.invalid && name?.touched) {
+          <span class="error-text">
+            @if (name?.errors?.['required']) { Goal name is required }
+            @if (name?.errors?.['maxlength']) { Name is too long (max 100 characters) }
+          </span>
+        }
+      </div>
+
+      <!-- Target Amount -->
+      <div class="form-group">
+        <label for="targetAmount">{{ 'savings.form.targetAmount' | translate }} (MAD) *</label>
+        <div class="input-wrapper">
+          <span class="currency-symbol">MAD</span>
+          <input
+            type="number"
+            id="targetAmount"
+            formControlName="targetAmount"
+            placeholder="0.00"
+            step="0.01"
+            min="1"
+            [class.invalid]="targetAmount?.invalid && targetAmount?.touched"
+          />
+        </div>
+        @if (targetAmount?.invalid && targetAmount?.touched) {
+          <span class="error-text">
+            @if (targetAmount?.errors?.['required']) { Target amount is required }
+            @if (targetAmount?.errors?.['min']) { Amount must be at least 1 MAD }
+          </span>
+        }
+      </div>
+
+      <!-- Target Date -->
+      <div class="form-group">
+        <label for="targetDate">{{ 'savings.form.deadline' | translate }}</label>
+        <input
+          type="date"
+          id="targetDate"
+          formControlName="targetDate"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Why are you saving? Any notes..."
+          rows="3"
+          [class.invalid]="description?.invalid && description?.touched"
+        ></textarea>
+        @if (description?.invalid && description?.touched) {
+          <span class="error-text">Description is too long (max 500 characters)</span>
+        }
+      </div>
+
+      <!-- Icon Selection -->
+      <div class="form-group">
+        <span class="field-label">Choose Icon</span>
+
+        <!-- Search -->
+        <div class="icon-search-wrap">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            [(ngModel)]="iconSearch"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="Search icons..."
+            (input)="onSearchChange()"
+            class="icon-search-input"
+          />
+          @if (iconSearch) {
+            <button type="button" class="clear-search" (click)="clearSearch()">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          }
+        </div>
+
+        <!-- Tabs -->
+        <div class="icon-tabs">
+          @for (tab of iconTabs; track tab) {
+            <button
+              type="button"
+              class="tab"
+              [class.active]="selectedIconTab === tab"
+              (click)="selectTab(tab)"
+            >
+              {{ tab }}
+            </button>
+          }
+        </div>
+
+        <!-- Icon Grid -->
+        <div class="icon-picker">
+          @for (iconItem of availableIcons; track iconItem.icon) {
+            <button
+              type="button"
+              class="icon-cell"
+              [class.selected]="selectedIcon === iconItem.icon"
+              (click)="selectIcon(iconItem.icon)"
+              [title]="iconItem.label"
+            >
+              <span class="material-symbols-outlined">{{ iconItem.icon }}</span>
+            </button>
+          }
+          @if (availableIcons.length === 0) {
+            <p class="no-icons">No icons found</p>
+          }
+        </div>
+      </div>
+
+      <!-- Color Selection -->
+      <div class="form-group">
+        <span class="field-label">Choose Color</span>
+        <div class="color-grid">
+          @for (color of colors; track color) {
+            <button
+              type="button"
+              class="color-option"
+              [style.backgroundColor]="color"
+              [class.selected]="selectedColor === color"
+              (click)="selectColor(color)"
+            >
+              @if (selectedColor === color) {
+                <span class="check">✓</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || goalForm.invalid">
+          @if (isSubmitting) {
+            <span class="spinner-small"></span>
+            {{ 'common.saving' | translate }}
+          } @else {
+            {{ isEditMode ? ('common.update' | translate) : ('common.create' | translate) }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>
