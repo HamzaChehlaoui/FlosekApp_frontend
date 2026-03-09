@@ -8,3 +8,4 @@ export * from './salary.service';
 export * from './user.service';
 export * from './icon.service';
 export * from './language.service';
+export * from './report.service';
