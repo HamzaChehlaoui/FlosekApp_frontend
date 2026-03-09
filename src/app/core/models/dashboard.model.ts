@@ -35,7 +35,7 @@ export interface Transaction {
   id: string;
   description: string;
   category: string;
-  emoji: string;
+  icon: string;
   amount: number;
   type: 'income' | 'expense';
   date: string;
@@ -43,7 +43,7 @@ export interface Transaction {
 
 export interface SpendingCategory {
   name: string;
-  emoji: string;
+  icon: string;
   color: string;
   amount: number;
   percentage: number;
@@ -55,7 +55,7 @@ export interface SpendingCategory {
 export interface SavingsGoalDisplay {
   id: string;
   name: string;
-  emoji: string;
+  icon: string;
   color: string;
   current: number;
   target: number;
@@ -66,7 +66,7 @@ export interface TransactionDisplay {
   id: string;
   description: string;
   category: string;
-  emoji: string;
+  icon: string;
   amount: number;
   type: 'income' | 'expense';
   date: Date;
