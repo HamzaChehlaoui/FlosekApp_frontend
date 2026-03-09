@@ -12,7 +12,7 @@ interface ExpenseDisplay {
   description: string;
   amount: number;
   category: string;
-  categoryEmoji: string;
+  categoryIcon: string;
   categoryColor: string;
   date: Date;
   notes?: string;
@@ -20,7 +20,7 @@ interface ExpenseDisplay {
 
 interface CategorySummary {
   name: string;
-  emoji: string;
+  icon: string;
   color: string;
   count: number;
   total: number;
@@ -99,7 +99,7 @@ export class ExpensesListComponent implements OnInit {
       description: expense.description || expense.category?.name || 'Expense',
       amount: expense.amount,
       category: expense.category?.name || 'Other',
-      categoryEmoji: expense.category?.icon || '📦',
+      categoryIcon: expense.category?.icon || 'category',
       categoryColor: expense.category?.color || '#6b7280',
       date: new Date(expense.expenseDate),
       notes: expense.notes
@@ -112,7 +112,7 @@ export class ExpensesListComponent implements OnInit {
         this.allCategories = categories;
         this.categories = categories.map(cat => ({
           name: cat.name,
-          emoji: cat.icon || '📦',
+          icon: cat.icon || 'category',
           color: cat.color || '#6b7280',
           count: 0,
           total: 0

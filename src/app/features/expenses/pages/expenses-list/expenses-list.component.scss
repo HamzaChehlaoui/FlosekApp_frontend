@@ -1,8 +1,7 @@
 .expenses-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 56px);
   background: #f8fafc;
   padding: 24px;
-  padding-top: 88px;
 }
 
 // Page Header
@@ -390,10 +389,6 @@
     &:hover {
       border-color: #cbd5e1;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-
-      .item-actions {
-        opacity: 1;
-      }
     }
 
     .item-icon {
@@ -404,6 +399,10 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+
+      .material-symbols-outlined {
+        font-size: 22px;
+      }
     }
 
     .item-details {
@@ -465,7 +464,7 @@
     .item-actions {
       display: flex;
       gap: 6px;
-      opacity: 0;
+      opacity: 1;
       transition: opacity 0.2s;
 
       .action-btn {
@@ -481,9 +480,18 @@
         color: #64748b;
         transition: all 0.15s;
 
+        .material-symbols-outlined {
+          font-size: 18px;
+        }
+
         &:hover {
           background: #f1f5f9;
           color: #0f172a;
+        }
+
+        &.edit:hover {
+          background: #eff6ff;
+          color: #3b82f6;
         }
 
         &.delete:hover {
@@ -569,6 +577,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
+
+      .material-symbols-outlined {
+        font-size: 16px;
+      }
     }
 
     .cat-name {
@@ -688,7 +700,6 @@
 @media (max-width: 900px) {
   .expenses-page {
     padding: 16px;
-    padding-top: 76px;
   }
 
   .page-header {
@@ -830,7 +841,6 @@
 @media (max-width: 320px) {
   .expenses-page {
     padding: 10px;
-    padding-top: 64px;
   }
 
   .page-header {
@@ -976,7 +986,6 @@
 @media (max-width: 220px) {
   .expenses-page {
     padding: 6px;
-    padding-top: 56px;
   }
 
   .page-header {
