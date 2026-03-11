@@ -37,7 +37,7 @@
           <span class="material-symbols-outlined">{{ selectedIcon }}</span>
         </div>
         <div class="preview-content">
-          <h3>{{ goalForm.get('name')?.value || 'Goal Name' }}</h3>
+          <h3>{{ goalForm.get('name')?.value || ('savings.form.goalNameFallback' | translate) }}</h3>
           <p>{{ (goalForm.get('targetAmount')?.value | number:'1.2-2') || '0.00' }} MAD</p>
         </div>
       </div>
@@ -49,13 +49,13 @@
           type="text"
           id="name"
           formControlName="name"
-          placeholder="e.g., New Car, Vacation, Emergency Fund"
+          [placeholder]="'savings.form.goalNamePlaceholder' | translate"
           [class.invalid]="name?.invalid && name?.touched"
         />
         @if (name?.invalid && name?.touched) {
           <span class="error-text">
-            @if (name?.errors?.['required']) { Goal name is required }
-            @if (name?.errors?.['maxlength']) { Name is too long (max 100 characters) }
+            @if (name?.errors?.['required']) { {{ 'savings.form.goalNameRequired' | translate }} }
+            @if (name?.errors?.['maxlength']) { {{ 'savings.form.goalNameTooLong' | translate }} }
           </span>
         }
       </div>
@@ -77,8 +77,8 @@
         </div>
         @if (targetAmount?.invalid && targetAmount?.touched) {
           <span class="error-text">
-            @if (targetAmount?.errors?.['required']) { Target amount is required }
-            @if (targetAmount?.errors?.['min']) { Amount must be at least 1 MAD }
+            @if (targetAmount?.errors?.['required']) { {{ 'savings.form.targetAmountRequired' | translate }} }
+            @if (targetAmount?.errors?.['min']) { {{ 'savings.form.targetAmountMin' | translate }} }
           </span>
         }
       </div>
@@ -95,22 +95,22 @@
 
       <!-- Description -->
       <div class="form-group">
-        <label for="description">Description</label>
+        <label for="description">{{ 'savings.form.description' | translate }}</label>
         <textarea
           id="description"
           formControlName="description"
-          placeholder="Why are you saving? Any notes..."
+          [placeholder]="'savings.form.descriptionPlaceholder' | translate"
           rows="3"
           [class.invalid]="description?.invalid && description?.touched"
         ></textarea>
         @if (description?.invalid && description?.touched) {
-          <span class="error-text">Description is too long (max 500 characters)</span>
+          <span class="error-text">{{ 'savings.form.descriptionTooLong' | translate }}</span>
         }
       </div>
 
       <!-- Icon Selection -->
       <div class="form-group">
-        <span class="field-label">Choose Icon</span>
+        <span class="field-label">{{ 'savings.form.chooseIcon' | translate }}</span>
 
         <!-- Search -->
         <div class="icon-search-wrap">
@@ -119,7 +119,7 @@
             type="text"
             [(ngModel)]="iconSearch"
             [ngModelOptions]="{standalone: true}"
-            placeholder="Search icons..."
+            [placeholder]="'savings.form.searchIcons' | translate"
             (input)="onSearchChange()"
             class="icon-search-input"
           />
@@ -158,14 +158,14 @@
             </button>
           }
           @if (availableIcons.length === 0) {
-            <p class="no-icons">No icons found</p>
+            <p class="no-icons">{{ 'savings.form.noIconsFound' | translate }}</p>
           }
         </div>
       </div>
 
       <!-- Color Selection -->
       <div class="form-group">
-        <span class="field-label">Choose Color</span>
+        <span class="field-label">{{ 'savings.form.chooseColor' | translate }}</span>
         <div class="color-grid">
           @for (color of colors; track color) {
             <button
