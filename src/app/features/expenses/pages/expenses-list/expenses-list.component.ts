@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
@@ -57,9 +57,15 @@ export class ExpensesListComponent implements OnInit {
   // View mode
   viewMode: 'list' | 'grid' = 'list';
 
+  // Delete confirmation
+  showDeleteModal = false;
+  expenseToDelete: ExpenseDisplay | null = null;
+  isDeleting = false;
+
   constructor(
     private readonly expenseService: ExpenseService,
-    private readonly categoryService: CategoryService
+    private readonly categoryService: CategoryService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -224,21 +230,38 @@ export class ExpensesListComponent implements OnInit {
     this.viewMode = this.viewMode === 'list' ? 'grid' : 'list';
   }
 
-  deleteExpense(id: string): void {
-    if (confirm('Are you sure you want to delete this expense?')) {
-      this.expenseService.deleteExpense(id).subscribe({
-        next: () => {
-          this.expenses = this.expenses.filter(exp => exp.id !== id);
-          this.applyFilters();
-          this.calculateSummary();
-          this.updateCategorySummary();
-        },
-        error: (error) => {
-          console.error('Error deleting expense:', error);
-          alert('Failed to delete expense. Please try again.');
-        }
-      });
-    }
+  editExpense(id: string): void {
+    this.router.navigate(['/expenses/add', id]);
+  }
+
+  openDeleteModal(expense: ExpenseDisplay): void {
+    this.expenseToDelete = expense;
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.expenseToDelete = null;
+    this.isDeleting = false;
+  }
+
+  confirmDelete(): void {
+    if (!this.expenseToDelete || this.isDeleting) return;
+    this.isDeleting = true;
+
+    this.expenseService.deleteExpense(this.expenseToDelete.id).subscribe({
+      next: () => {
+        this.expenses = this.expenses.filter(exp => exp.id !== this.expenseToDelete!.id);
+        this.applyFilters();
+        this.calculateSummary();
+        this.updateCategorySummary();
+        this.closeDeleteModal();
+      },
+      error: (error) => {
+        console.error('Error deleting expense:', error);
+        this.isDeleting = false;
+      }
+    });
   }
 
   formatDate(date: Date): string {
