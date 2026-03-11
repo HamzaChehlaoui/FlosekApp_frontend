@@ -6,6 +6,7 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
+    "add": "Add",
     "update": "Update",
     "close": "Close",
     "search": "Search",
@@ -21,7 +22,12 @@
     "required": "Required",
     "optional": "Optional",
     "viewAll": "View All",
+    "retry": "Retry",
+    "previous": "Previous",
+    "on": "On",
+    "off": "Off",
     "saving": "Saving...",
+    "deleting": "Deleting...",
     "saveChanges": "Save Changes",
     "changing": "Changing..."
   },
@@ -31,6 +37,7 @@
     "budget": "Budget",
     "savings": "Savings",
     "reports": "Reports",
+    "add": "Add",
     "settings": "Settings",
     "profile": "Profile",
     "logout": "Logout",
@@ -38,6 +45,14 @@
     "register": "Register"
   },
   "auth": {
+    "placeholders": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "name@company.com",
+      "password": "Enter your password",
+      "createPassword": "Create a strong password",
+      "confirmPassword": "Confirm your password"
+    },
     "login": {
       "title": "Welcome Back",
       "subtitle": "Enter your credentials to access your account",
@@ -47,7 +62,6 @@
       "forgotPassword": "Forgot password?",
       "noAccount": "Don't have an account?",
       "createAccount": "Create account",
-      "signUp": "Sign up",
       "submit": "Sign In",
       "signingIn": "Signing in..."
     },
@@ -158,13 +172,39 @@
     "category": "Category",
     "notes": "Notes (Optional)",
     "recurringExpense": "This is a recurring expense",
+    "deleteConfirmTitle": "Delete Expense?",
+    "deleteConfirmMessage": "This action cannot be undone. The expense will be permanently removed.",
+    "searchPlaceholder": "Search expenses...",
+    "listView": "List View",
+    "gridView": "Grid View",
+    "noExpensesFound": "No expenses found",
+    "noExpensesHint": "Try adjusting your filters or add a new expense",
+    "categoryBreakdown": "Category Breakdown",
+    "manageCategories": "Manage",
+    "quickFilter": "Quick Filter",
+    "sort": {
+      "newestFirst": "Newest First",
+      "oldestFirst": "Oldest First",
+      "highestAmount": "Highest Amount",
+      "lowestAmount": "Lowest Amount"
+    },
     "form": {
       "amount": "Amount",
       "category": "Category",
       "date": "Date",
       "description": "Description",
       "notes": "Notes",
-      "recurring": "Recurring"
+      "recurring": "Recurring",
+      "amountRequired": "Amount is required",
+      "amountGreaterThanZero": "Amount must be greater than 0",
+      "descriptionPlaceholder": "What did you spend on?",
+      "descriptionRequired": "Description is required",
+      "descriptionTooLong": "Description is too long (max 255 characters)",
+      "dateRequired": "Date is required",
+      "selectCategory": "Select a category",
+      "categoryRequired": "Category is required",
+      "notesPlaceholder": "Add any additional notes...",
+      "notesTooLong": "Notes are too long (max 500 characters)"
     },
     "filters": {
       "all": "All",
@@ -194,10 +234,53 @@
     "spent": "Spent",
     "remaining": "Remaining",
     "exceeded": "Exceeded",
+    "alreadyUsed": "Already used",
+    "categoryCount": "{{count}} categories",
+    "usedPercentage": "{{percentage}}% used",
+    "amountLeft": "{{amount}} MAD left",
+    "fallbackName": "Budget",
+    "deleteConfirmTitle": "Delete Budget?",
+    "deleteConfirmMessage": "This budget will be removed from your plan. This action cannot be undone.",
+    "messages": {
+      "created": "Budget created successfully!",
+      "updated": "Budget updated successfully!"
+    },
+    "errors": {
+      "loadFailed": "Failed to load budgets. Please try again.",
+      "createFailed": "Failed to create budget",
+      "updateFailed": "Failed to update budget"
+    },
+    "tips": {
+      "trackDaily": {
+        "title": "Track Daily",
+        "description": "Review your spending every day to stay on track"
+      },
+      "realisticGoals": {
+        "title": "Set Realistic Goals",
+        "description": "Make sure your budget limits are achievable"
+      },
+      "analyzeTrends": {
+        "title": "Analyze Trends",
+        "description": "Look at your spending patterns monthly"
+      },
+      "emergencyFund": {
+        "title": "Emergency Fund",
+        "description": "Always allocate 10-20% for unexpected expenses"
+      }
+    },
     "form": {
       "category": "Category",
+      "selectCategory": "Select a category",
+      "categoryRequired": "Category is required",
+      "nameOptional": "Budget Name (Optional)",
+      "namePlaceholder": "e.g., Monthly Food Budget",
+      "nameTooLong": "Name is too long (max 100 characters)",
+      "amountRequired": "Amount is required",
+      "amountMin": "Amount must be at least 1 MAD",
       "amount": "Budget Amount",
       "period": "Period",
+      "isRecurring": "Recurring budget (auto-renew monthly)",
+      "recurringHint": "Dates are set automatically to the current month.",
       "startDate": "Start Date",
       "endDate": "End Date"
     }
@@ -208,6 +291,46 @@
     "trackGoals": "Track and achieve your financial goals",
     "addGoal": "Add Goal",
     "editGoal": "Edit Goal",
+    "add": "Add",
+    "of": "of",
+    "recentContributions": "Recent Contributions",
+    "completedGoalsPanel": "Completed Goals",
+    "savingsTips": "Savings Tips",
+    "addContribution": "Add Contribution",
+    "progressComplete": "{{percentage}}% complete",
+    "totalTargetProgress": "{{percentage}}% of total target",
+    "amountToGo": "{{amount}} MAD to go",
+    "amountMadRequired": "Amount (MAD) *",
+    "fillRemaining": "Fill remaining ({{amount}} MAD)",
+    "exceedsRemaining": "This exceeds the remaining {{remaining}} MAD. New total will be {{newTotal}} MAD ({{target}} MAD target).",
+    "newTotal": "New total: {{amount}} MAD",
+    "noteOptional": "Note (optional)",
+    "notePlaceholder": "e.g., Monthly savings, Bonus...",
+    "noDeadline": "No deadline",
+    "contributionDefaultNote": "Contribution",
+    "errors": {
+      "loadFailed": "Failed to load savings goals. Please try again."
+    },
+    "tips": {
+      "clearGoals": {
+        "title": "Set Clear Goals",
+        "description": "Define specific, measurable savings targets with deadlines"
+      },
+      "automate": {
+        "title": "Automate Savings",
+        "description": "Set up automatic transfers to your savings account each month"
+      },
+      "track": {
+        "title": "Track Progress",
+        "description": "Review your savings goals weekly to stay motivated"
+      },
+      "rule": {
+        "title": "50/30/20 Rule",
+        "description": "Allocate 20% of income to savings and debt repayment"
+      }
+    },
+    "deleteConfirmTitle": "Delete Savings Goal?",
+    "deleteConfirmMessage": "This goal will be removed permanently. This action cannot be undone.",
     "noGoals": "No savings goals",
     "noGoalsDesc": "Create a goal to start saving",
     "progress": "Progress",
@@ -224,7 +347,20 @@
       "name": "Goal Name",
       "targetAmount": "Target Amount",
       "currentAmount": "Current Amount",
-      "deadline": "Target Date"
+      "deadline": "Target Date",
+      "description": "Description",
+      "goalNameFallback": "Goal Name",
+      "goalNamePlaceholder": "e.g., New Car, Vacation, Emergency Fund",
+      "goalNameRequired": "Goal name is required",
+      "goalNameTooLong": "Name is too long (max 100 characters)",
+      "targetAmountRequired": "Target amount is required",
+      "targetAmountMin": "Amount must be at least 1 MAD",
+      "descriptionPlaceholder": "Why are you saving? Any notes...",
+      "descriptionTooLong": "Description is too long (max 500 characters)",
+      "chooseIcon": "Choose Icon",
+      "searchIcons": "Search icons...",
+      "noIconsFound": "No icons found",
+      "chooseColor": "Choose Color"
     }
   },
   "salary": {
@@ -239,6 +375,34 @@
     "addSalary": "Add Salary",
     "annualEstimate": "Annual Estimate",
     "noCurrentSalary": "No current salary set",
+    "noSalaryRecords": "No salary records",
+    "noSalaryRecordsDesc": "Add your salary to start tracking your income history",
+    "loadingHistory": "Loading salary history...",
+    "perMonth": "/ month",
+    "effectiveSince": "Effective since {{date}}",
+    "past": "Past",
+    "editSalary": "Edit Salary",
+    "addNewSalary": "Add New Salary",
+    "table": {
+      "amount": "Amount",
+      "effectiveDate": "Effective Date",
+      "description": "Description",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} - {{end}} of {{total}} entries"
+    },
+    "form": {
+      "monthlyAmount": "Monthly Amount",
+      "currency": "Currency",
+      "effectiveDate": "Effective Date",
+      "effectiveDateRequired": "Effective date is required",
+      "descriptionOptional": "Description (Optional)",
+      "descriptionPlaceholder": "e.g., Salary increase, New position",
+      "amountRequired": "Amount is required",
+      "amountGreaterThanZero": "Amount must be greater than 0"
+    },
     "setSalary": "Set Your Salary",
     "history": {
       "title": "Salary History",
@@ -264,6 +428,23 @@
     "incomeVsExpenses": "Income vs Expenses",
     "incomeExpensesSavings": "Income, expenses, and savings over the last 6 months",
     "topCategories": "Top Categories",
+    "topExpenses": "Top Expenses",
+    "vsLastMonth": "vs last month",
+    "metrics": {
+      "totalIncome": "Total Income",
+      "totalExpenses": "Total Expenses",
+      "netSavings": "Net Savings",
+      "savingsRate": "Savings Rate"
+    },
+    "categoryBreakdown": "Category Breakdown",
+    "legend": {
+      "income": "Income",
+      "expenses": "Expenses",
+      "savings": "Savings"
+    },
+    "errors": {
+      "unableToLoad": "Unable to load report data. Please check your connection and try again."
+    },
     "exportReport": "Export Report",
     "export": "Export"
   },
@@ -274,6 +455,33 @@
     "currency": "Currency",
     "theme": "Theme",
     "notifications": "Notifications",
+    "managePreferences": "Manage your app preferences",
+    "dataPrivacy": "Data & Privacy",
+    "exportMyData": "Export My Data",
+    "exportMyDataDesc": "Download all your data as JSON",
+    "clearLocalData": "Clear Local Data",
+    "clearLocalDataDesc": "Remove cached data from this device",
+    "deleteAccountDesc": "Permanently delete your account and data",
+    "deleteAccountConfirmTitle": "Delete Account?",
+    "deleteAccountConfirmMessage": "This action cannot be undone. All your data will be permanently deleted.",
+    "notificationsItems": {
+      "budgetAlerts": {
+        "title": "Budget Alerts",
+        "desc": "Get notified when you exceed your budget"
+      },
+      "savingsReminders": {
+        "title": "Savings Reminders",
+        "desc": "Weekly reminders to contribute to your goals"
+      },
+      "weeklyReport": {
+        "title": "Weekly Report",
+        "desc": "Receive weekly spending summary via email"
+      },
+      "pushNotifications": {
+        "title": "Push Notifications",
+        "desc": "Receive browser push notifications"
+      }
+    },
     "security": "Security",
     "changePassword": "Change Password",
     "deleteAccount": "Delete Account"
@@ -295,7 +503,22 @@
     "changePassword": "Change Password",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
-    "confirmNewPassword": "Confirm New Password"
+    "confirmNewPassword": "Confirm New Password",
+    "placeholders": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "currentPassword": "Enter current password",
+      "newPassword": "Enter new password",
+      "confirmPassword": "Confirm new password"
+    }
+  },
+  "currencies": {
+    "MAD": "MAD - Moroccan Dirham",
+    "USD": "USD - US Dollar",
+    "EUR": "EUR - Euro",
+    "GBP": "GBP - British Pound"
   },
   "errors": {
     "required": "This field is required",

@@ -6,6 +6,7 @@
     "delete": "Supprimer",
     "edit": "Modifier",
     "create": "Créer",
+    "add": "Ajouter",
     "update": "Mettre à jour",
     "close": "Fermer",
     "search": "Rechercher",
@@ -21,7 +22,12 @@
     "required": "Obligatoire",
     "optional": "Facultatif",
     "viewAll": "Voir tout",
+    "retry": "Réessayer",
+    "previous": "Précédent",
+    "on": "Activé",
+    "off": "Désactivé",
     "saving": "Enregistrement...",
+    "deleting": "Suppression...",
     "saveChanges": "Enregistrer les modifications",
     "changing": "Modification..."
   },
@@ -38,6 +44,14 @@
     "register": "S'inscrire"
   },
   "auth": {
+    "placeholders": {
+      "firstName": "Jean",
+      "lastName": "Dupont",
+      "email": "name@company.com",
+      "password": "Entrez votre mot de passe",
+      "createPassword": "Créez un mot de passe fort",
+      "confirmPassword": "Confirmez votre mot de passe"
+    },
     "login": {
       "title": "Bon retour",
       "subtitle": "Entrez vos identifiants pour accéder à votre compte",
@@ -158,13 +172,39 @@
     "category": "Catégorie",
     "notes": "Notes (Facultatif)",
     "recurringExpense": "C'est une dépense récurrente",
+    "deleteConfirmTitle": "Supprimer la dépense ?",
+    "deleteConfirmMessage": "Cette action est irréversible. La dépense sera définitivement supprimée.",
+    "searchPlaceholder": "Rechercher des dépenses...",
+    "listView": "Vue liste",
+    "gridView": "Vue grille",
+    "noExpensesFound": "Aucune dépense trouvée",
+    "noExpensesHint": "Essayez d'ajuster vos filtres ou d'ajouter une nouvelle dépense",
+    "categoryBreakdown": "Répartition par catégorie",
+    "manageCategories": "Gérer",
+    "quickFilter": "Filtre rapide",
+    "sort": {
+      "newestFirst": "Plus récentes d'abord",
+      "oldestFirst": "Plus anciennes d'abord",
+      "highestAmount": "Montant le plus élevé",
+      "lowestAmount": "Montant le plus faible"
+    },
     "form": {
       "amount": "Montant",
       "category": "Catégorie",
       "date": "Date",
       "description": "Description",
       "notes": "Notes",
-      "recurring": "Récurrent"
+      "recurring": "Récurrent",
+      "amountRequired": "Le montant est obligatoire",
+      "amountGreaterThanZero": "Le montant doit être supérieur à 0",
+      "descriptionPlaceholder": "À quoi correspond cette dépense ?",
+      "descriptionRequired": "La description est obligatoire",
+      "descriptionTooLong": "La description est trop longue (255 caractères max)",
+      "dateRequired": "La date est obligatoire",
+      "selectCategory": "Sélectionnez une catégorie",
+      "categoryRequired": "La catégorie est obligatoire",
+      "notesPlaceholder": "Ajoutez des notes supplémentaires...",
+      "notesTooLong": "Les notes sont trop longues (500 caractères max)"
     },
     "filters": {
       "all": "Tout",
@@ -194,10 +234,53 @@
     "spent": "Dépensé",
     "remaining": "Restant",
     "exceeded": "Dépassé",
+    "alreadyUsed": "Déjà utilisée",
+    "categoryCount": "{{count}} catégories",
+    "usedPercentage": "{{percentage}}% utilisé",
+    "amountLeft": "{{amount}} MAD restants",
+    "fallbackName": "Budget",
+    "deleteConfirmTitle": "Supprimer le budget ?",
+    "deleteConfirmMessage": "Ce budget sera retiré de votre plan. Cette action est irréversible.",
+    "messages": {
+      "created": "Budget créé avec succès !",
+      "updated": "Budget mis à jour avec succès !"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des budgets. Veuillez réessayer.",
+      "createFailed": "Échec de la création du budget",
+      "updateFailed": "Échec de la mise à jour du budget"
+    },
+    "tips": {
+      "trackDaily": {
+        "title": "Suivi quotidien",
+        "description": "Examinez vos dépenses chaque jour pour rester sur la bonne voie"
+      },
+      "realisticGoals": {
+        "title": "Objectifs réalistes",
+        "description": "Assurez-vous que vos limites budgétaires sont atteignables"
+      },
+      "analyzeTrends": {
+        "title": "Analyser les tendances",
+        "description": "Observez vos habitudes de dépenses chaque mois"
+      },
+      "emergencyFund": {
+        "title": "Fonds d'urgence",
+        "description": "Réservez toujours 10 à 20 % pour les imprévus"
+      }
+    },
     "form": {
       "category": "Catégorie",
+      "selectCategory": "Sélectionnez une catégorie",
+      "categoryRequired": "La catégorie est obligatoire",
+      "nameOptional": "Nom du budget (facultatif)",
+      "namePlaceholder": "ex : Budget alimentaire mensuel",
+      "nameTooLong": "Le nom est trop long (100 caractères max)",
+      "amountRequired": "Le montant est obligatoire",
+      "amountMin": "Le montant doit être au minimum de 1 MAD",
       "amount": "Montant du budget",
       "period": "Période",
+      "isRecurring": "Budget récurrent (renouvellement mensuel automatique)",
+      "recurringHint": "Les dates sont définies automatiquement pour le mois en cours.",
       "startDate": "Date de début",
       "endDate": "Date de fin"
     }
@@ -208,6 +291,46 @@
     "trackGoals": "Suivez et atteignez vos objectifs financiers",
     "addGoal": "Ajouter un objectif",
     "editGoal": "Modifier l'objectif",
+    "add": "Ajouter",
+    "of": "sur",
+    "recentContributions": "Contributions récentes",
+    "completedGoalsPanel": "Objectifs complétés",
+    "savingsTips": "Conseils d'épargne",
+    "addContribution": "Ajouter une contribution",
+    "progressComplete": "{{percentage}}% complété",
+    "totalTargetProgress": "{{percentage}}% de l'objectif total",
+    "amountToGo": "{{amount}} MAD restants",
+    "amountMadRequired": "Montant (MAD) *",
+    "fillRemaining": "Remplir le restant ({{amount}} MAD)",
+    "exceedsRemaining": "Cela dépasse le restant de {{remaining}} MAD. Le nouveau total sera de {{newTotal}} MAD (objectif {{target}} MAD).",
+    "newTotal": "Nouveau total : {{amount}} MAD",
+    "noteOptional": "Note (facultatif)",
+    "notePlaceholder": "ex : Épargne mensuelle, bonus...",
+    "noDeadline": "Pas d'échéance",
+    "contributionDefaultNote": "Contribution",
+    "errors": {
+      "loadFailed": "Échec du chargement des objectifs d'épargne. Veuillez réessayer."
+    },
+    "tips": {
+      "clearGoals": {
+        "title": "Objectifs clairs",
+        "description": "Définissez des objectifs d'épargne précis et mesurables avec des échéances"
+      },
+      "automate": {
+        "title": "Automatiser l'épargne",
+        "description": "Configurez des virements automatiques vers votre épargne chaque mois"
+      },
+      "track": {
+        "title": "Suivre les progrès",
+        "description": "Examinez vos objectifs d'épargne chaque semaine pour rester motivé"
+      },
+      "rule": {
+        "title": "Règle 50/30/20",
+        "description": "Allouez 20 % de vos revenus à l'épargne et au remboursement des dettes"
+      }
+    },
+    "deleteConfirmTitle": "Supprimer l'objectif d'épargne ?",
+    "deleteConfirmMessage": "Cet objectif sera supprimé définitivement. Cette action est irréversible.",
     "noGoals": "Aucun objectif d'épargne",
     "noGoalsDesc": "Créez un objectif pour commencer à épargner",
     "progress": "Progression",
@@ -224,7 +347,20 @@
       "name": "Nom de l'objectif",
       "targetAmount": "Montant cible",
       "currentAmount": "Montant actuel",
-      "deadline": "Date cible"
+      "deadline": "Date cible",
+      "description": "Description",
+      "goalNameFallback": "Nom de l'objectif",
+      "goalNamePlaceholder": "ex : Nouvelle voiture, Vacances, Fonds d'urgence",
+      "goalNameRequired": "Le nom de l'objectif est obligatoire",
+      "goalNameTooLong": "Le nom est trop long (100 caractères max)",
+      "targetAmountRequired": "Le montant cible est obligatoire",
+      "targetAmountMin": "Le montant doit être au minimum de 1 MAD",
+      "descriptionPlaceholder": "Pourquoi épargnez-vous ? Des notes...",
+      "descriptionTooLong": "La description est trop longue (500 caractères max)",
+      "chooseIcon": "Choisir une icône",
+      "searchIcons": "Rechercher des icônes...",
+      "noIconsFound": "Aucune icône trouvée",
+      "chooseColor": "Choisir une couleur"
     }
   },
   "salary": {
@@ -239,6 +375,34 @@
     "addSalary": "Ajouter un salaire",
     "annualEstimate": "Estimation annuelle",
     "noCurrentSalary": "Aucun salaire actuel défini",
+    "noSalaryRecords": "Aucun enregistrement de salaire",
+    "noSalaryRecordsDesc": "Ajoutez votre salaire pour commencer à suivre votre historique de revenus",
+    "loadingHistory": "Chargement de l'historique des salaires...",
+    "perMonth": "/ mois",
+    "effectiveSince": "En vigueur depuis {{date}}",
+    "past": "Passé",
+    "editSalary": "Modifier le salaire",
+    "addNewSalary": "Ajouter un nouveau salaire",
+    "table": {
+      "amount": "Montant",
+      "effectiveDate": "Date d'effet",
+      "description": "Description",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "pagination": {
+      "showing": "Affichage de {{start}} à {{end}} sur {{total}} entrées"
+    },
+    "form": {
+      "monthlyAmount": "Montant mensuel",
+      "currency": "Devise",
+      "effectiveDate": "Date d'effet",
+      "effectiveDateRequired": "La date d'effet est obligatoire",
+      "descriptionOptional": "Description (facultatif)",
+      "descriptionPlaceholder": "ex : Augmentation de salaire, Nouveau poste",
+      "amountRequired": "Le montant est obligatoire",
+      "amountGreaterThanZero": "Le montant doit être supérieur à 0"
+    },
     "setSalary": "Définir votre salaire",
     "history": {
       "title": "Historique des salaires",
@@ -264,6 +428,23 @@
     "incomeVsExpenses": "Revenus vs Dépenses",
     "incomeExpensesSavings": "Revenus, dépenses et épargne sur les 6 derniers mois",
     "topCategories": "Top catégories",
+    "topExpenses": "Top dépenses",
+    "vsLastMonth": "par rapport au mois dernier",
+    "metrics": {
+      "totalIncome": "Revenus totaux",
+      "totalExpenses": "Dépenses totales",
+      "netSavings": "Épargne nette",
+      "savingsRate": "Taux d'épargne"
+    },
+    "categoryBreakdown": "Répartition par catégorie",
+    "legend": {
+      "income": "Revenus",
+      "expenses": "Dépenses",
+      "savings": "Épargne"
+    },
+    "errors": {
+      "unableToLoad": "Impossible de charger les données du rapport. Veuillez vérifier votre connexion et réessayer."
+    },
     "exportReport": "Exporter le rapport",
     "export": "Exporter"
   },
@@ -274,6 +455,33 @@
     "currency": "Devise",
     "theme": "Thème",
     "notifications": "Notifications",
+    "managePreferences": "Gérez les préférences de votre application",
+    "dataPrivacy": "Données et confidentialité",
+    "exportMyData": "Exporter mes données",
+    "exportMyDataDesc": "Téléchargez toutes vos données au format JSON",
+    "clearLocalData": "Effacer les données locales",
+    "clearLocalDataDesc": "Supprimer les données en cache de cet appareil",
+    "deleteAccountDesc": "Supprimer définitivement votre compte et vos données",
+    "deleteAccountConfirmTitle": "Supprimer le compte ?",
+    "deleteAccountConfirmMessage": "Cette action est irréversible. Toutes vos données seront supprimées définitivement.",
+    "notificationsItems": {
+      "budgetAlerts": {
+        "title": "Alertes budget",
+        "desc": "Recevez une alerte lorsque vous dépassez votre budget"
+      },
+      "savingsReminders": {
+        "title": "Rappels d'épargne",
+        "desc": "Rappels hebdomadaires pour contribuer à vos objectifs"
+      },
+      "weeklyReport": {
+        "title": "Rapport hebdomadaire",
+        "desc": "Recevez un résumé hebdomadaire des dépenses par email"
+      },
+      "pushNotifications": {
+        "title": "Notifications push",
+        "desc": "Recevez des notifications push du navigateur"
+      }
+    },
     "security": "Sécurité",
     "changePassword": "Changer le mot de passe",
     "deleteAccount": "Supprimer le compte"
@@ -295,7 +503,22 @@
     "changePassword": "Changer le mot de passe",
     "currentPassword": "Mot de passe actuel",
     "newPassword": "Nouveau mot de passe",
-    "confirmNewPassword": "Confirmer le nouveau mot de passe"
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "placeholders": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse email",
+      "phone": "Numéro de téléphone",
+      "currentPassword": "Entrez le mot de passe actuel",
+      "newPassword": "Entrez le nouveau mot de passe",
+      "confirmPassword": "Confirmez le nouveau mot de passe"
+    }
+  },
+  "currencies": {
+    "MAD": "MAD - Dirham marocain",
+    "USD": "USD - Dollar américain",
+    "EUR": "EUR - Euro",
+    "GBP": "GBP - Livre sterling"
   },
   "errors": {
     "required": "Ce champ est requis",

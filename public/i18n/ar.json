@@ -6,6 +6,7 @@
     "delete": "حذف",
     "edit": "تعديل",
     "create": "إنشاء",
+    "add": "إضافة",
     "update": "تحديث",
     "close": "إغلاق",
     "search": "بحث",
@@ -21,7 +22,12 @@
     "required": "مطلوب",
     "optional": "اختياري",
     "viewAll": "عرض الكل",
+    "retry": "إعادة المحاولة",
+    "previous": "السابق",
+    "on": "تشغيل",
+    "off": "إيقاف",
     "saving": "جاري الحفظ...",
+    "deleting": "جارٍ الحذف...",
     "saveChanges": "حفظ التغييرات",
     "changing": "جاري التغيير..."
   },
@@ -38,6 +44,14 @@
     "register": "إنشاء حساب"
   },
   "auth": {
+    "placeholders": {
+      "firstName": "محمد",
+      "lastName": "العلمي",
+      "email": "name@company.com",
+      "password": "أدخل كلمة المرور",
+      "createPassword": "أنشئ كلمة مرور قوية",
+      "confirmPassword": "أكد كلمة المرور"
+    },
     "login": {
       "title": "مرحباً بعودتك",
       "subtitle": "أدخل بياناتك للوصول إلى حسابك",
@@ -158,13 +172,39 @@
     "category": "الفئة",
     "notes": "ملاحظات (اختياري)",
     "recurringExpense": "هذا مصروف متكرر",
+    "deleteConfirmTitle": "حذف المصروف؟",
+    "deleteConfirmMessage": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف المصروف نهائياً.",
+    "searchPlaceholder": "ابحث في المصروفات...",
+    "listView": "عرض قائمة",
+    "gridView": "عرض شبكي",
+    "noExpensesFound": "لم يتم العثور على مصروفات",
+    "noExpensesHint": "جرّب تعديل الفلاتر أو أضف مصروفاً جديداً",
+    "categoryBreakdown": "توزيع الفئات",
+    "manageCategories": "إدارة",
+    "quickFilter": "تصفية سريعة",
+    "sort": {
+      "newestFirst": "الأحدث أولاً",
+      "oldestFirst": "الأقدم أولاً",
+      "highestAmount": "الأعلى مبلغاً",
+      "lowestAmount": "الأقل مبلغاً"
+    },
     "form": {
       "amount": "المبلغ",
       "category": "الفئة",
       "date": "التاريخ",
       "description": "الوصف",
       "notes": "ملاحظات",
-      "recurring": "متكرر"
+      "recurring": "متكرر",
+      "amountRequired": "المبلغ مطلوب",
+      "amountGreaterThanZero": "يجب أن يكون المبلغ أكبر من 0",
+      "descriptionPlaceholder": "على ماذا أنفقت؟",
+      "descriptionRequired": "الوصف مطلوب",
+      "descriptionTooLong": "الوصف طويل جدًا (الحد الأقصى 255 حرفًا)",
+      "dateRequired": "التاريخ مطلوب",
+      "selectCategory": "اختر فئة",
+      "categoryRequired": "الفئة مطلوبة",
+      "notesPlaceholder": "أضف أي ملاحظات إضافية...",
+      "notesTooLong": "الملاحظات طويلة جدًا (الحد الأقصى 500 حرف)"
     },
     "filters": {
       "all": "الكل",
@@ -194,10 +234,53 @@
     "spent": "المصروف",
     "remaining": "المتبقي",
     "exceeded": "تم التجاوز",
+    "alreadyUsed": "مستخدمة بالفعل",
+    "categoryCount": "{{count}} فئات",
+    "usedPercentage": "تم استخدام {{percentage}}%",
+    "amountLeft": "المتبقي {{amount}} درهم",
+    "fallbackName": "ميزانية",
+    "deleteConfirmTitle": "حذف الميزانية؟",
+    "deleteConfirmMessage": "سيتم حذف هذه الميزانية من خطتك. لا يمكن التراجع عن هذا الإجراء.",
+    "messages": {
+      "created": "تم إنشاء الميزانية بنجاح!",
+      "updated": "تم تحديث الميزانية بنجاح!"
+    },
+    "errors": {
+      "loadFailed": "فشل تحميل الميزانيات. حاول مرة أخرى.",
+      "createFailed": "فشل إنشاء الميزانية",
+      "updateFailed": "فشل تحديث الميزانية"
+    },
+    "tips": {
+      "trackDaily": {
+        "title": "تابع يوميًا",
+        "description": "راجع مصاريفك كل يوم للبقاء على المسار الصحيح"
+      },
+      "realisticGoals": {
+        "title": "ضع أهدافًا واقعية",
+        "description": "تأكد أن حدود ميزانيتك قابلة للتحقيق"
+      },
+      "analyzeTrends": {
+        "title": "حلّل الاتجاهات",
+        "description": "انظر إلى أنماط إنفاقك شهريًا"
+      },
+      "emergencyFund": {
+        "title": "صندوق الطوارئ",
+        "description": "خصص دائمًا 10-20% للمصاريف غير المتوقعة"
+      }
+    },
     "form": {
       "category": "الفئة",
+      "selectCategory": "اختر فئة",
+      "categoryRequired": "الفئة مطلوبة",
+      "nameOptional": "اسم الميزانية (اختياري)",
+      "namePlaceholder": "مثال: ميزانية الطعام الشهرية",
+      "nameTooLong": "الاسم طويل جدًا (الحد الأقصى 100 حرف)",
+      "amountRequired": "المبلغ مطلوب",
+      "amountMin": "يجب أن يكون المبلغ 1 درهم على الأقل",
       "amount": "مبلغ الميزانية",
       "period": "الفترة",
+      "isRecurring": "ميزانية متكررة (تتجدد شهريًا تلقائيًا)",
+      "recurringHint": "يتم ضبط التواريخ تلقائيًا على الشهر الحالي.",
       "startDate": "تاريخ البدء",
       "endDate": "تاريخ الانتهاء"
     }
@@ -208,6 +291,46 @@
     "trackGoals": "تتبع وتحقيق أهدافك المالية",
     "addGoal": "إضافة هدف",
     "editGoal": "تعديل الهدف",
+    "add": "إضافة",
+    "of": "من",
+    "recentContributions": "أحدث المساهمات",
+    "completedGoalsPanel": "الأهداف المكتملة",
+    "savingsTips": "نصائح الادخار",
+    "addContribution": "إضافة مساهمة",
+    "progressComplete": "مكتمل {{percentage}}%",
+    "totalTargetProgress": "{{percentage}}% من إجمالي الهدف",
+    "amountToGo": "متبقي {{amount}} درهم",
+    "amountMadRequired": "المبلغ (درهم) *",
+    "fillRemaining": "املأ المتبقي ({{amount}} درهم)",
+    "exceedsRemaining": "هذا يتجاوز المتبقي {{remaining}} درهم. الإجمالي الجديد سيكون {{newTotal}} درهم (الهدف {{target}} درهم).",
+    "newTotal": "الإجمالي الجديد: {{amount}} درهم",
+    "noteOptional": "ملاحظة (اختياري)",
+    "notePlaceholder": "مثال: ادخار شهري، مكافأة...",
+    "noDeadline": "بدون موعد نهائي",
+    "contributionDefaultNote": "مساهمة",
+    "errors": {
+      "loadFailed": "فشل تحميل أهداف الادخار. حاول مرة أخرى."
+    },
+    "tips": {
+      "clearGoals": {
+        "title": "ضع أهدافًا واضحة",
+        "description": "حدد أهداف ادخار واضحة وقابلة للقياس مع مواعيد نهائية"
+      },
+      "automate": {
+        "title": "أتمتة الادخار",
+        "description": "فعّل تحويلات تلقائية إلى حساب الادخار كل شهر"
+      },
+      "track": {
+        "title": "تابع التقدم",
+        "description": "راجع أهداف الادخار أسبوعيًا للحفاظ على الحافز"
+      },
+      "rule": {
+        "title": "قاعدة 50/30/20",
+        "description": "خصص 20% من الدخل للادخار وسداد الديون"
+      }
+    },
+    "deleteConfirmTitle": "حذف هدف الادخار؟",
+    "deleteConfirmMessage": "سيتم حذف هذا الهدف نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
     "noGoals": "لا توجد أهداف ادخار",
     "noGoalsDesc": "أنشئ هدفاً لبدء الادخار",
     "progress": "التقدم",
@@ -224,7 +347,20 @@
       "name": "اسم الهدف",
       "targetAmount": "المبلغ المستهدف",
       "currentAmount": "المبلغ الحالي",
-      "deadline": "التاريخ المستهدف"
+      "deadline": "التاريخ المستهدف",
+      "description": "الوصف",
+      "goalNameFallback": "اسم الهدف",
+      "goalNamePlaceholder": "مثال: سيارة جديدة، عطلة، صندوق طوارئ",
+      "goalNameRequired": "اسم الهدف مطلوب",
+      "goalNameTooLong": "الاسم طويل جدًا (الحد الأقصى 100 حرف)",
+      "targetAmountRequired": "المبلغ المستهدف مطلوب",
+      "targetAmountMin": "يجب أن يكون المبلغ 1 درهم على الأقل",
+      "descriptionPlaceholder": "لماذا تدخر؟ أي ملاحظات...",
+      "descriptionTooLong": "الوصف طويل جدًا (الحد الأقصى 500 حرف)",
+      "chooseIcon": "اختر أيقونة",
+      "searchIcons": "ابحث عن أيقونات...",
+      "noIconsFound": "لم يتم العثور على أيقونات",
+      "chooseColor": "اختر اللون"
     }
   },
   "salary": {
@@ -239,6 +375,34 @@
     "addSalary": "إضافة راتب",
     "annualEstimate": "التقدير السنوي",
     "noCurrentSalary": "لم يتم تحديد راتب حالي",
+    "noSalaryRecords": "لا توجد سجلات رواتب",
+    "noSalaryRecordsDesc": "أضف راتبك لبدء تتبع سجل الدخل",
+    "loadingHistory": "جاري تحميل سجل الرواتب...",
+    "perMonth": "/ شهر",
+    "effectiveSince": "ساري منذ {{date}}",
+    "past": "سابق",
+    "editSalary": "تعديل الراتب",
+    "addNewSalary": "إضافة راتب جديد",
+    "table": {
+      "amount": "المبلغ",
+      "effectiveDate": "تاريخ السريان",
+      "description": "الوصف",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "pagination": {
+      "showing": "عرض {{start}} - {{end}} من أصل {{total}}"
+    },
+    "form": {
+      "monthlyAmount": "المبلغ الشهري",
+      "currency": "العملة",
+      "effectiveDate": "تاريخ السريان",
+      "effectiveDateRequired": "تاريخ السريان مطلوب",
+      "descriptionOptional": "الوصف (اختياري)",
+      "descriptionPlaceholder": "مثال: زيادة راتب، منصب جديد",
+      "amountRequired": "المبلغ مطلوب",
+      "amountGreaterThanZero": "يجب أن يكون المبلغ أكبر من 0"
+    },
     "setSalary": "حدد راتبك",
     "history": {
       "title": "سجل الرواتب",
@@ -264,6 +428,23 @@
     "incomeVsExpenses": "الدخل مقابل المصروفات",
     "incomeExpensesSavings": "الدخل والمصروفات والمدخرات خلال الأشهر الستة الماضية",
     "topCategories": "أعلى الفئات",
+    "topExpenses": "أعلى المصروفات",
+    "vsLastMonth": "مقارنة بالشهر الماضي",
+    "metrics": {
+      "totalIncome": "إجمالي الدخل",
+      "totalExpenses": "إجمالي المصروفات",
+      "netSavings": "صافي الادخار",
+      "savingsRate": "معدل الادخار"
+    },
+    "categoryBreakdown": "توزيع الفئات",
+    "legend": {
+      "income": "الدخل",
+      "expenses": "المصروفات",
+      "savings": "المدخرات"
+    },
+    "errors": {
+      "unableToLoad": "تعذر تحميل بيانات التقرير. يرجى التحقق من الاتصال والمحاولة مرة أخرى."
+    },
     "exportReport": "تصدير التقرير",
     "export": "تصدير"
   },
@@ -274,6 +455,33 @@
     "currency": "العملة",
     "theme": "المظهر",
     "notifications": "الإشعارات",
+    "managePreferences": "إدارة تفضيلات التطبيق",
+    "dataPrivacy": "البيانات والخصوصية",
+    "exportMyData": "تصدير بياناتي",
+    "exportMyDataDesc": "تنزيل جميع بياناتك بصيغة JSON",
+    "clearLocalData": "مسح البيانات المحلية",
+    "clearLocalDataDesc": "إزالة البيانات المخزنة مؤقتًا من هذا الجهاز",
+    "deleteAccountDesc": "حذف حسابك وبياناتك بشكل دائم",
+    "deleteAccountConfirmTitle": "حذف الحساب؟",
+    "deleteAccountConfirmMessage": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع بياناتك نهائيًا.",
+    "notificationsItems": {
+      "budgetAlerts": {
+        "title": "تنبيهات الميزانية",
+        "desc": "تلقي إشعار عند تجاوز الميزانية"
+      },
+      "savingsReminders": {
+        "title": "تذكيرات الادخار",
+        "desc": "تذكيرات أسبوعية للمساهمة في أهدافك"
+      },
+      "weeklyReport": {
+        "title": "تقرير أسبوعي",
+        "desc": "استلام ملخص الإنفاق الأسبوعي عبر البريد الإلكتروني"
+      },
+      "pushNotifications": {
+        "title": "إشعارات فورية",
+        "desc": "استلام إشعارات المتصفح"
+      }
+    },
     "security": "الأمان",
     "changePassword": "تغيير كلمة المرور",
     "deleteAccount": "حذف الحساب"
@@ -295,7 +503,22 @@
     "changePassword": "تغيير كلمة المرور",
     "currentPassword": "كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
-    "confirmNewPassword": "تأكيد كلمة المرور الجديدة"
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "placeholders": {
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "عنوان البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "currentPassword": "أدخل كلمة المرور الحالية",
+      "newPassword": "أدخل كلمة المرور الجديدة",
+      "confirmPassword": "أكد كلمة المرور الجديدة"
+    }
+  },
+  "currencies": {
+    "MAD": "MAD - الدرهم المغربي",
+    "USD": "USD - الدولار الأمريكي",
+    "EUR": "EUR - اليورو",
+    "GBP": "GBP - الجنيه الإسترليني"
   },
   "errors": {
     "required": "هذا الحقل مطلوب",
