@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { ReportService } from '../../../../core/services';
 import {
@@ -23,6 +23,7 @@ import autoTable from 'jspdf-autotable';
 })
 export class ReportsDashboardComponent implements OnInit {
   private readonly reportService = inject(ReportService);
+  private readonly translate = inject(TranslateService);
 
   currentPeriod = '';
   isLoading = false;
@@ -85,7 +86,7 @@ export class ReportsDashboardComponent implements OnInit {
   calculateMetrics(report: ReportData): void {
     this.keyMetrics = [
       {
-        label: 'Total Income',
+        label: 'reports.metrics.totalIncome',
         value: report.totalIncome,
         change: Math.abs(report.incomeChange),
         trend: report.incomeChange >= 0 ? 'up' : 'down',
@@ -93,7 +94,7 @@ export class ReportsDashboardComponent implements OnInit {
         color: '#10b981'
       },
       {
-        label: 'Total Expenses',
+        label: 'reports.metrics.totalExpenses',
         value: report.totalExpenses,
         change: Math.abs(report.expenseChange),
         trend: report.expenseChange >= 0 ? 'up' : 'down',
@@ -101,7 +102,7 @@ export class ReportsDashboardComponent implements OnInit {
         color: '#ef4444'
       },
       {
-        label: 'Net Savings',
+        label: 'reports.metrics.netSavings',
         value: report.netSavings,
         change: Math.abs(report.savingsChange),
         trend: report.savingsChange >= 0 ? 'up' : 'down',
@@ -109,7 +110,7 @@ export class ReportsDashboardComponent implements OnInit {
         color: '#3b82f6'
       },
       {
-        label: 'Savings Rate',
+        label: 'reports.metrics.savingsRate',
         value: report.savingsRate,
         change: Math.abs(report.savingsChange),
         trend: report.savingsChange >= 0 ? 'up' : 'down',
@@ -171,8 +172,8 @@ export class ReportsDashboardComponent implements OnInit {
       startY: y,
       head: [['Metric', 'Value', 'Change']],
       body: this.keyMetrics.map(m => [
-        m.label,
-        m.label === 'Savings Rate' ? `${m.value}%` : `${m.value.toLocaleString()} MAD`,
+        this.translate.instant(m.label),
+        m.icon === 'rate' ? `${m.value}%` : `${m.value.toLocaleString()} MAD`,
         `${m.trend === 'up' ? '+' : '-'}${m.change.toFixed(1)}%`
       ]),
       theme: 'grid',
