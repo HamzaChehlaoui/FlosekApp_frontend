@@ -3,7 +3,7 @@
 <div class="settings-container">
   <div class="page-header">
     <h1>{{ 'settings.title' | translate }}</h1>
-    <p>Manage your app preferences</p>
+    <p>{{ 'settings.managePreferences' | translate }}</p>
   </div>
 
   <!-- Success/Error Messages -->
@@ -90,8 +90,8 @@
     <div class="notifications-list">
       <label class="toggle-item">
         <span class="toggle-info">
-          <span class="toggle-title">Budget Alerts</span>
-          <span class="toggle-desc">Get notified when you exceed your budget</span>
+          <span class="toggle-title">{{ 'settings.notificationsItems.budgetAlerts.title' | translate }}</span>
+          <span class="toggle-desc">{{ 'settings.notificationsItems.budgetAlerts.desc' | translate }}</span>
         </span>
         <input
           type="checkbox"
@@ -103,8 +103,8 @@
 
       <label class="toggle-item">
         <span class="toggle-info">
-          <span class="toggle-title">Savings Reminders</span>
-          <span class="toggle-desc">Weekly reminders to contribute to your goals</span>
+          <span class="toggle-title">{{ 'settings.notificationsItems.savingsReminders.title' | translate }}</span>
+          <span class="toggle-desc">{{ 'settings.notificationsItems.savingsReminders.desc' | translate }}</span>
         </span>
         <input
           type="checkbox"
@@ -116,8 +116,8 @@
 
       <label class="toggle-item">
         <span class="toggle-info">
-          <span class="toggle-title">Weekly Report</span>
-          <span class="toggle-desc">Receive weekly spending summary via email</span>
+          <span class="toggle-title">{{ 'settings.notificationsItems.weeklyReport.title' | translate }}</span>
+          <span class="toggle-desc">{{ 'settings.notificationsItems.weeklyReport.desc' | translate }}</span>
         </span>
         <input
           type="checkbox"
@@ -129,8 +129,8 @@
 
       <label class="toggle-item">
         <span class="toggle-info">
-          <span class="toggle-title">Push Notifications</span>
-          <span class="toggle-desc">Receive browser push notifications</span>
+          <span class="toggle-title">{{ 'settings.notificationsItems.pushNotifications.title' | translate }}</span>
+          <span class="toggle-desc">{{ 'settings.notificationsItems.pushNotifications.desc' | translate }}</span>
         </span>
         <input
           type="checkbox"
@@ -146,30 +146,30 @@
   <section class="settings-section">
     <h2 class="section-title">
       <span class="section-icon">🔒</span>
-      Data & Privacy
+      {{ 'settings.dataPrivacy' | translate }}
     </h2>
     <div class="data-actions">
       <button class="action-btn" (click)="exportData()">
         <span class="btn-icon">📤</span>
         <span class="btn-content">
-          <span class="btn-title">Export My Data</span>
-          <span class="btn-desc">Download all your data as JSON</span>
+          <span class="btn-title">{{ 'settings.exportMyData' | translate }}</span>
+          <span class="btn-desc">{{ 'settings.exportMyDataDesc' | translate }}</span>
         </span>
       </button>
 
       <button class="action-btn" (click)="clearLocalData()">
         <span class="btn-icon">🗑️</span>
         <span class="btn-content">
-          <span class="btn-title">Clear Local Data</span>
-          <span class="btn-desc">Remove cached data from this device</span>
+          <span class="btn-title">{{ 'settings.clearLocalData' | translate }}</span>
+          <span class="btn-desc">{{ 'settings.clearLocalDataDesc' | translate }}</span>
         </span>
       </button>
 
       <button class="action-btn danger" (click)="confirmDeleteAccount()">
         <span class="btn-icon">⚠️</span>
         <span class="btn-content">
-          <span class="btn-title">Delete Account</span>
-          <span class="btn-desc">Permanently delete your account and data</span>
+          <span class="btn-title">{{ 'settings.deleteAccount' | translate }}</span>
+          <span class="btn-desc">{{ 'settings.deleteAccountDesc' | translate }}</span>
         </span>
       </button>
     </div>
@@ -189,18 +189,18 @@
   <div class="modal-overlay" (click)="cancelDelete()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-icon danger">⚠️</div>
-      <h3>Delete Account?</h3>
-      <p>This action cannot be undone. All your data will be permanently deleted.</p>
+      <h3>{{ 'settings.deleteAccountConfirmTitle' | translate }}</h3>
+      <p>{{ 'settings.deleteAccountConfirmMessage' | translate }}</p>
       <div class="modal-actions">
         <button class="btn btn-secondary" (click)="cancelDelete()" [disabled]="isDeleting">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </button>
         <button class="btn btn-danger" (click)="deleteAccount()" [disabled]="isDeleting">
           @if (isDeleting) {
             <span class="spinner-small"></span>
-            Deleting...
+            {{ 'common.deleting' | translate }}
           } @else {
-            Delete Account
+            {{ 'settings.deleteAccount' | translate }}
           }
         </button>
       </div>
