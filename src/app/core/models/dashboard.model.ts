@@ -83,6 +83,7 @@ export interface Budget {
   category?: Category;
   isExceeded: boolean;
   spentPercentage: number;
+  isRecurring: boolean;
 }
 
 export interface Category {
