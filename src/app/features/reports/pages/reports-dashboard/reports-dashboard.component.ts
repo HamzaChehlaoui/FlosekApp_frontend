@@ -24,6 +24,7 @@ import autoTable from 'jspdf-autotable';
 export class ReportsDashboardComponent implements OnInit {
   private readonly reportService = inject(ReportService);
   private readonly translate = inject(TranslateService);
+  private readonly currencyCode = 'MAD';
 
   currentPeriod = '';
   isLoading = false;
@@ -133,145 +134,262 @@ export class ReportsDashboardComponent implements OnInit {
   }
 
   formatDate(date: string | Date): string {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString(this.getCurrentLocale(), {
       month: 'short',
       day: 'numeric'
     });
   }
 
-  exportReport(): void {
+  private getCurrentLocale(): string {
+    switch (this.translate.currentLang) {
+      case 'ar':
+        return 'ar-MA';
+      case 'fr':
+        return 'fr-FR';
+      default:
+        return 'en-US';
+    }
+  }
+
+  private formatCurrency(value: number): string {
+    return `${new Intl.NumberFormat(this.getCurrentLocale(), {
+      maximumFractionDigits: 0
+    }).format(value)} ${this.currencyCode}`;
+  }
+
+  private formatPercentage(value: number): string {
+    return `${new Intl.NumberFormat(this.getCurrentLocale(), {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    }).format(value)}%`;
+  }
+
+  private async loadImageAsDataUrl(path: string): Promise<string | null> {
+    try {
+      const response = await fetch(path);
+      if (!response.ok) {
+        return null;
+      }
+
+      const blob = await response.blob();
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : null);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  private addPdfHeader(doc: jsPDF, pageWidth: number, logoDataUrl: string | null): number {
+    const title = this.translate.instant('reports.title');
+    const generatedOn = this.translate.instant('reports.pdf.generatedOn');
+    const periodLabel = this.translate.instant('reports.pdf.period');
+
+    // Logo and brand
+    if (logoDataUrl) {
+      doc.addImage(logoDataUrl, 'PNG', 40, 32, 36, 36);
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(17, 24, 39);
+    doc.text('Flosek', logoDataUrl ? 84 : 40, 56);
+
+    // Title
+    doc.setFontSize(16);
+    doc.setTextColor(55, 65, 81);
+    doc.text(title, 40, 90);
+
+    // Period and date info
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(107, 114, 128);
+    doc.text(`${periodLabel}: ${this.currentPeriod}`, 40, 110);
+    doc.text(`${generatedOn}: ${new Date().toLocaleDateString(this.getCurrentLocale())}`, 40, 124);
+
+    // Separator line
+    doc.setDrawColor(229, 231, 235);
+    doc.setLineWidth(1);
+    doc.line(40, 140, pageWidth - 40, 140);
+
+    return 160;
+  }
+
+  private addSummarySection(doc: jsPDF, y: number, pageWidth: number): number {
+    const sectionTitle = this.translate.instant('reports.pdf.executiveSummary');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(17, 24, 39);
+    doc.text(sectionTitle, 40, y);
+
+    y += 20;
+
+    // Simple summary table
+    const summaryData = [
+      [this.translate.instant('reports.metrics.totalIncome'), this.formatCurrency(this.totalIncome)],
+      [this.translate.instant('reports.metrics.totalExpenses'), this.formatCurrency(this.totalExpenses)],
+      [this.translate.instant('reports.metrics.netSavings'), this.formatCurrency(this.netSavings)],
+      [this.translate.instant('reports.metrics.savingsRate'), this.formatPercentage(this.savingsRate)]
+    ];
+
+    autoTable(doc, {
+      startY: y,
+      body: summaryData,
+      theme: 'plain',
+      styles: {
+        fontSize: 11,
+        cellPadding: { top: 8, bottom: 8, left: 12, right: 12 },
+        textColor: [55, 65, 81]
+      },
+      columnStyles: {
+        0: { fontStyle: 'normal', cellWidth: 200 },
+        1: { fontStyle: 'bold', halign: 'right' }
+      },
+      margin: { left: 40, right: 40 },
+      tableLineColor: [229, 231, 235],
+      tableLineWidth: 0.5
+    });
+
+    return (doc as any).lastAutoTable.finalY + 24;
+  }
+
+  private addSectionTitle(doc: jsPDF, title: string, y: number): number {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(17, 24, 39);
+    doc.text(title, 40, y);
+
+    return y + 16;
+  }
+
+  private addPdfFooter(doc: jsPDF, pageWidth: number, pageHeight: number): void {
+    const totalPages = doc.getNumberOfPages();
+    const generatedBy = this.translate.instant('reports.pdf.generatedBy');
+
+    for (let page = 1; page <= totalPages; page++) {
+      doc.setPage(page);
+
+      doc.setDrawColor(229, 231, 235);
+      doc.setLineWidth(0.5);
+      doc.line(40, pageHeight - 40, pageWidth - 40, pageHeight - 40);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(156, 163, 175);
+      doc.text(generatedBy, 40, pageHeight - 24);
+      doc.text(`${page} / ${totalPages}`, pageWidth - 40, pageHeight - 24, { align: 'right' });
+    }
+  }
+
+  async exportReport(): Promise<void> {
     if (!this.hasRealData) {
       this.exportError = 'Cannot export report: No real data available. Please check your connection and try again.';
       setTimeout(() => this.exportError = null, 5000);
       return;
     }
 
-    const doc = new jsPDF();
+    const logoDataUrl = await this.loadImageAsDataUrl('/logo_flosek-.png');
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
     const pageWidth = doc.internal.pageSize.getWidth();
-    let y = 20;
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-    // Title
-    doc.setFontSize(22);
-    doc.setTextColor(30, 41, 59);
-    doc.text('Financial Report', pageWidth / 2, y, { align: 'center' });
-    y += 8;
+    // Consistent table styling - simple gray theme
+    const tableHead: [number, number, number] = [55, 65, 81];
+    const tableText: [number, number, number] = [75, 85, 99];
+    const tableAlt: [number, number, number] = [249, 250, 251];
 
-    // Period & Date
-    doc.setFontSize(11);
-    doc.setTextColor(100, 116, 139);
-    doc.text(`${this.currentPeriod} — Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, y, { align: 'center' });
-    y += 14;
+    let y = this.addPdfHeader(doc, pageWidth, logoDataUrl);
+    y = this.addSummarySection(doc, y, pageWidth);
 
-    // Key Metrics Summary
-    doc.setFontSize(14);
-    doc.setTextColor(30, 41, 59);
-    doc.text('Key Metrics', 14, y);
-    y += 2;
+    // Monthly Overview
+    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.monthlyOverview'), y);
 
     autoTable(doc, {
       startY: y,
-      head: [['Metric', 'Value', 'Change']],
-      body: this.keyMetrics.map(m => [
-        this.translate.instant(m.label),
-        m.icon === 'rate' ? `${m.value}%` : `${m.value.toLocaleString()} MAD`,
-        `${m.trend === 'up' ? '+' : '-'}${m.change.toFixed(1)}%`
-      ]),
-      theme: 'grid',
-      headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 4 },
-      margin: { left: 14, right: 14 }
-    });
-
-    y = (doc as any).lastAutoTable.finalY + 12;
-
-    // Monthly Trends Table
-    doc.setFontSize(14);
-    doc.setTextColor(30, 41, 59);
-    doc.text('Monthly Trends', 14, y);
-    y += 2;
-
-    autoTable(doc, {
-      startY: y,
-      head: [['Month', 'Income (MAD)', 'Expenses (MAD)', 'Savings (MAD)']],
+      head: [[
+        this.translate.instant('reports.pdf.month'),
+        this.translate.instant('reports.legend.income'),
+        this.translate.instant('reports.legend.expenses'),
+        this.translate.instant('reports.legend.savings')
+      ]],
       body: this.monthlyData.map(m => [
         `${m.month} ${m.year}`,
-        m.income.toLocaleString(),
-        m.expenses.toLocaleString(),
-        m.savings.toLocaleString()
+        this.formatCurrency(m.income),
+        this.formatCurrency(m.expenses),
+        this.formatCurrency(m.savings)
       ]),
       theme: 'striped',
-      headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 4 },
-      margin: { left: 14, right: 14 }
+      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold' },
+      styles: { fontSize: 10, cellPadding: 10, textColor: tableText },
+      alternateRowStyles: { fillColor: tableAlt },
+      margin: { left: 40, right: 40 }
     });
 
-    y = (doc as any).lastAutoTable.finalY + 12;
+    y = (doc as any).lastAutoTable.finalY + 28;
 
-    // Category Breakdown Table
-    doc.setFontSize(14);
-    doc.setTextColor(30, 41, 59);
-    doc.text('Category Breakdown', 14, y);
-    y += 2;
+    // Category Breakdown
+    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.categoryAnalysis'), y);
 
     autoTable(doc, {
       startY: y,
-      head: [['Category', 'Amount (MAD)', 'Percentage', 'Trend']],
+      head: [[
+        this.translate.instant('budget.categories'),
+        this.translate.instant('reports.pdf.amount'),
+        this.translate.instant('reports.pdf.percentage'),
+        this.translate.instant('reports.pdf.trend')
+      ]],
       body: this.categorySpending.map(c => [
         c.name,
-        c.amount.toLocaleString(),
-        `${c.percentage}%`,
-        `${c.trend} (${c.change >= 0 ? '+' : ''}${c.change}%)`
+        this.formatCurrency(c.amount),
+        this.formatPercentage(c.percentage),
+        `${c.change >= 0 ? '+' : ''}${c.change}%`
       ]),
       theme: 'striped',
-      headStyles: { fillColor: [139, 92, 246], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 4 },
-      margin: { left: 14, right: 14 }
+      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold' },
+      styles: { fontSize: 10, cellPadding: 10, textColor: tableText },
+      alternateRowStyles: { fillColor: tableAlt },
+      margin: { left: 40, right: 40 }
     });
 
-    y = (doc as any).lastAutoTable.finalY + 12;
+    y = (doc as any).lastAutoTable.finalY + 28;
 
-    // Check if we need a new page for top expenses
-    if (y > 240) {
+    // Check if we need a new page
+    if (y > pageHeight - 180) {
       doc.addPage();
-      y = 20;
+      y = 50;
     }
 
-    // Top Expenses Table
-    doc.setFontSize(14);
-    doc.setTextColor(30, 41, 59);
-    doc.text('Top Expenses', 14, y);
-    y += 2;
+    // Top Expenses
+    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.recentExpenses'), y);
 
     autoTable(doc, {
       startY: y,
-      head: [['Description', 'Category', 'Amount (MAD)', 'Date']],
+      head: [[
+        this.translate.instant('reports.pdf.description'),
+        this.translate.instant('budget.categories'),
+        this.translate.instant('reports.pdf.amount'),
+        this.translate.instant('reports.pdf.date')
+      ]],
       body: this.topExpenses.map(e => [
         e.description,
         e.category,
-        e.amount.toLocaleString(),
+        this.formatCurrency(e.amount),
         this.formatDate(e.date)
       ]),
       theme: 'striped',
-      headStyles: { fillColor: [239, 68, 68], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 4 },
-      margin: { left: 14, right: 14 }
+      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold' },
+      styles: { fontSize: 10, cellPadding: 10, textColor: tableText },
+      alternateRowStyles: { fillColor: tableAlt },
+      margin: { left: 40, right: 40 }
     });
 
-    // Footer
-    const totalPages = doc.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.setTextColor(150);
-      doc.text(
-        `Page ${i} of ${totalPages} — Flosek Financial Report`,
-        pageWidth / 2,
-        doc.internal.pageSize.getHeight() - 10,
-        { align: 'center' }
-      );
-    }
+    this.addPdfFooter(doc, pageWidth, pageHeight);
 
-    doc.save(`financial-report-${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`flosek-report-${new Date().toISOString().split('T')[0]}.pdf`);
   }
 
   changeTimePeriod(period: string): void {

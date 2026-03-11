@@ -445,6 +445,24 @@
     "errors": {
       "unableToLoad": "Impossible de charger les données du rapport. Veuillez vérifier votre connexion et réessayer."
     },
+    "pdf": {
+      "generatedOn": "Généré le",
+      "period": "Période du rapport",
+      "executiveSummary": "Résumé exécutif",
+      "monthlyOverview": "Vue mensuelle",
+      "categoryAnalysis": "Analyse des catégories",
+      "recentExpenses": "Principales dépenses récentes",
+      "metric": "Indicateur",
+      "value": "Valeur",
+      "change": "Variation",
+      "month": "Mois",
+      "amount": "Montant",
+      "percentage": "Pourcentage",
+      "trend": "Tendance",
+      "description": "Description",
+      "date": "Date",
+      "generatedBy": "Généré par Flosek"
+    },
     "exportReport": "Exporter le rapport",
     "export": "Exporter"
   },

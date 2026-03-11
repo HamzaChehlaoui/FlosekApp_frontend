@@ -445,6 +445,24 @@
     "errors": {
       "unableToLoad": "تعذر تحميل بيانات التقرير. يرجى التحقق من الاتصال والمحاولة مرة أخرى."
     },
+    "pdf": {
+      "generatedOn": "تاريخ الإنشاء",
+      "period": "الفترة المشمولة",
+      "executiveSummary": "الملخص التنفيذي",
+      "monthlyOverview": "النظرة الشهرية",
+      "categoryAnalysis": "تحليل الفئات",
+      "recentExpenses": "أعلى المصروفات الأخيرة",
+      "metric": "المؤشر",
+      "value": "القيمة",
+      "change": "التغير",
+      "month": "الشهر",
+      "amount": "المبلغ",
+      "percentage": "النسبة",
+      "trend": "الاتجاه",
+      "description": "الوصف",
+      "date": "التاريخ",
+      "generatedBy": "تم الإنشاء بواسطة Flosek"
+    },
     "exportReport": "تصدير التقرير",
     "export": "تصدير"
   },
