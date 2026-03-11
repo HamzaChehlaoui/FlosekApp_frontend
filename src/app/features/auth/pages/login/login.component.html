@@ -8,7 +8,23 @@
 
   <!-- Right Side - Login Form -->
   <div class="auth-form-section">
+    <div class="auth-tools">
+      <div class="language-switch" role="group" aria-label="Language switcher">
+        @for (lang of languages; track lang.code) {
+          <button
+            type="button"
+            class="lang-chip"
+            [class.active]="currentLanguageCode === lang.code"
+            (click)="setLanguage(lang.code)"
+          >
+            <span class="lang-code">{{ lang.code.toUpperCase() }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
     <div class="auth-card">
+
       <!-- Logo -->
       <div class="logo">
         <div class="logo-icon">
@@ -39,7 +55,7 @@
               id="email"
               [(ngModel)]="credentials.email"
               name="email"
-              placeholder="name@company.com"
+              [placeholder]="'auth.placeholders.email' | translate"
               required
               autocomplete="email"
             />
@@ -59,7 +75,7 @@
               id="password"
               [(ngModel)]="credentials.password"
               name="password"
-              placeholder="Enter your password"
+              [placeholder]="'auth.placeholders.password' | translate"
               required
               autocomplete="current-password"
             />

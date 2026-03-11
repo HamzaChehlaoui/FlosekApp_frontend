@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService } from '../../../../core/services';
+import { AuthService, LanguageService } from '../../../../core/services';
 import { LoginRequest } from '../../../../core/models';
 
 @Component({
@@ -14,6 +14,11 @@ import { LoginRequest } from '../../../../core/models';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   credentials: LoginRequest = {
     email: '',
     password: ''
@@ -23,12 +28,13 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   isLoading = false;
   returnUrl = '/profile';
+  readonly languages = this.languageService.getLanguages();
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) { }
+  constructor() { }
+
+  get currentLanguageCode(): string {
+    return this.languageService.getCurrentLanguage().code;
+  }
 
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -40,6 +46,10 @@ export class LoginComponent implements OnInit {
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  setLanguage(langCode: string): void {
+    this.languageService.setLanguage(langCode);
   }
 
   onSubmit(): void {

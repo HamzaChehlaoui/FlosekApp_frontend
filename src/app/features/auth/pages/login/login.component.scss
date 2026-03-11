@@ -228,6 +228,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   padding: 40px;
   background: var(--gray-50);
 
@@ -240,6 +241,13 @@
     background: white;
     align-items: flex-start;
   }
+}
+
+.auth-tools {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
 }
 
 .auth-card {
@@ -256,6 +264,42 @@
     border-radius: 0;
     box-shadow: none;
     min-height: 100vh;
+  }
+}
+
+.language-switch {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--gray-200);
+
+  .lang-chip {
+    border: none;
+    background: transparent;
+    color: var(--gray-500);
+    border-radius: 6px;
+    height: 28px;
+    min-width: 36px;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover:not(.active) {
+      color: var(--gray-700);
+      background: var(--gray-100);
+    }
+
+    &.active {
+      color: #fff;
+      background: var(--primary-blue);
+    }
   }
 }
 
