@@ -11,7 +11,23 @@
 
   <!-- Right Side - Register Form -->
   <div class="auth-form-section">
+    <div class="auth-tools">
+      <div class="language-switch" role="group" aria-label="Language switcher">
+        @for (lang of languages; track lang.code) {
+          <button
+            type="button"
+            class="lang-chip"
+            [class.active]="currentLanguageCode === lang.code"
+            (click)="setLanguage(lang.code)"
+          >
+            <span class="lang-code">{{ lang.code.toUpperCase() }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
     <div class="auth-card">
+
       <!-- Logo -->
       <div class="logo">
         <div class="logo-icon">
@@ -42,7 +58,7 @@
                 id="firstName"
                 [(ngModel)]="userData.firstName"
                 name="firstName"
-                placeholder="John"
+                [placeholder]="'auth.placeholders.firstName' | translate"
                 required
               />
             </div>
@@ -61,7 +77,7 @@
                 id="lastName"
                 [(ngModel)]="userData.lastName"
                 name="lastName"
-                placeholder="Doe"
+                [placeholder]="'auth.placeholders.lastName' | translate"
                 required
               />
             </div>
@@ -82,7 +98,7 @@
               id="email"
               [(ngModel)]="userData.email"
               name="email"
-              placeholder="name@company.com"
+              [placeholder]="'auth.placeholders.email' | translate"
               required
             />
           </div>
@@ -101,7 +117,7 @@
               id="password"
               [(ngModel)]="userData.password"
               name="password"
-              placeholder="Create a strong password"
+              [placeholder]="'auth.placeholders.createPassword' | translate"
               required
             />
             <button type="button" class="toggle-password" (click)="togglePassword()">
@@ -147,7 +163,7 @@
               id="confirmPassword"
               [(ngModel)]="confirmPassword"
               name="confirmPassword"
-              placeholder="Confirm your password"
+              [placeholder]="'auth.placeholders.confirmPassword' | translate"
               required
             />
             <button type="button" class="toggle-password" (click)="toggleConfirmPassword()">

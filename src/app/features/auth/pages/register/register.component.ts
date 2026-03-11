@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService } from '../../../../core/services';
+import { AuthService, LanguageService } from '../../../../core/services';
 import { RegisterRequest } from '../../../../core/models';
 
 @Component({
@@ -14,6 +14,10 @@ import { RegisterRequest } from '../../../../core/models';
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
+  private readonly languageService = inject(LanguageService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   userData: RegisterRequest = {
     firstName: '',
     lastName: '',
@@ -27,11 +31,17 @@ export class RegisterComponent {
   errorMessage = '';
   successMessage = '';
   isLoading = false;
+  readonly languages = this.languageService.getLanguages();
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) { }
+  constructor() { }
+
+  get currentLanguageCode(): string {
+    return this.languageService.getCurrentLanguage().code;
+  }
+
+  setLanguage(langCode: string): void {
+    this.languageService.setLanguage(langCode);
+  }
 
   get passwordStrength(): { level: number; text: string; color: string } {
     const password = this.userData.password;
