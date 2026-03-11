@@ -48,8 +48,8 @@
         </div>
         @if (amount?.invalid && amount?.touched) {
           <span class="error-text">
-            @if (amount?.errors?.['required']) { Amount is required }
-            @if (amount?.errors?.['min']) { Amount must be greater than 0 }
+            @if (amount?.errors?.['required']) { {{ 'expenses.form.amountRequired' | translate }} }
+            @if (amount?.errors?.['min']) { {{ 'expenses.form.amountGreaterThanZero' | translate }} }
           </span>
         }
       </div>
@@ -61,13 +61,13 @@
           type="text"
           id="description"
           formControlName="description"
-          placeholder="What did you spend on?"
+          [placeholder]="'expenses.form.descriptionPlaceholder' | translate"
           [class.invalid]="description?.invalid && description?.touched"
         />
         @if (description?.invalid && description?.touched) {
           <span class="error-text">
-            @if (description?.errors?.['required']) { Description is required }
-            @if (description?.errors?.['maxlength']) { Description is too long (max 255 characters) }
+            @if (description?.errors?.['required']) { {{ 'expenses.form.descriptionRequired' | translate }} }
+            @if (description?.errors?.['maxlength']) { {{ 'expenses.form.descriptionTooLong' | translate }} }
           </span>
         }
       </div>
@@ -82,7 +82,7 @@
           [class.invalid]="expenseDate?.invalid && expenseDate?.touched"
         />
         @if (expenseDate?.invalid && expenseDate?.touched) {
-          <span class="error-text">Date is required</span>
+          <span class="error-text">{{ 'expenses.form.dateRequired' | translate }}</span>
         }
       </div>
 
@@ -95,7 +95,7 @@
               <span class="dropdown-icon material-symbols-outlined">{{ getSelectedCategoryIcon() }}</span>
               <span class="dropdown-text">{{ getSelectedCategoryName() }}</span>
             } @else {
-              <span class="dropdown-text placeholder">Select a category</span>
+              <span class="dropdown-text placeholder">{{ 'expenses.form.selectCategory' | translate }}</span>
             }
             <span class="dropdown-arrow material-symbols-outlined">expand_more</span>
           </div>
@@ -116,7 +116,7 @@
           }
         </div>
         @if (categoryId?.invalid && categoryId?.touched) {
-          <span class="error-text">Category is required</span>
+          <span class="error-text">{{ 'expenses.form.categoryRequired' | translate }}</span>
         }
       </div>
 
@@ -126,12 +126,12 @@
         <textarea
           id="notes"
           formControlName="notes"
-          placeholder="Add any additional notes..."
+          [placeholder]="'expenses.form.notesPlaceholder' | translate"
           rows="3"
           [class.invalid]="notes?.invalid && notes?.touched"
         ></textarea>
         @if (notes?.invalid && notes?.touched) {
-          <span class="error-text">Notes are too long (max 500 characters)</span>
+          <span class="error-text">{{ 'expenses.form.notesTooLong' | translate }}</span>
         }
       </div>
 
