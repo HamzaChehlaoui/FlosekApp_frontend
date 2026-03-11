@@ -46,7 +46,7 @@
               <label for="firstName">{{ 'profile.firstName' | translate }}</label>
               <input type="text"
                      id="firstName"
-                     placeholder="First Name"
+                [placeholder]="'profile.placeholders.firstName' | translate"
                      [readonly]="!isEditMode"
                      [(ngModel)]="profileForm.firstName">
             </div>
@@ -54,7 +54,7 @@
               <label for="lastName">{{ 'profile.lastName' | translate }}</label>
               <input type="text"
                      id="lastName"
-                     placeholder="Last Name"
+                [placeholder]="'profile.placeholders.lastName' | translate"
                      [readonly]="!isEditMode"
                      [(ngModel)]="profileForm.lastName">
             </div>
@@ -65,7 +65,7 @@
               <label for="email">{{ 'profile.email' | translate }}</label>
               <input type="email"
                      id="email"
-                     placeholder="Email Address"
+                [placeholder]="'profile.placeholders.email' | translate"
                      [readonly]="true"
                      [(ngModel)]="profileForm.email">
             </div>
@@ -73,7 +73,7 @@
               <label for="phone">{{ 'profile.phone' | translate }}</label>
               <input type="tel"
                      id="phone"
-                     placeholder="Phone Number"
+                [placeholder]="'profile.placeholders.phone' | translate"
                      [readonly]="!isEditMode"
                      [(ngModel)]="profileForm.phone">
             </div>
@@ -103,10 +103,10 @@
             <div class="preference-item">
               <label for="currency">{{ 'profile.currency' | translate }}</label>
               <select id="currency" [(ngModel)]="selectedCurrency" class="currency-select">
-                <option value="MAD">MAD - Moroccan Dirham</option>
-                <option value="USD">USD - US Dollar</option>
-                <option value="EUR">EUR - Euro</option>
-                <option value="GBP">GBP - British Pound</option>
+                <option value="MAD">{{ 'currencies.MAD' | translate }}</option>
+                <option value="USD">{{ 'currencies.USD' | translate }}</option>
+                <option value="EUR">{{ 'currencies.EUR' | translate }}</option>
+                <option value="GBP">{{ 'currencies.GBP' | translate }}</option>
               </select>
             </div>
           </div>
@@ -115,7 +115,7 @@
             <div class="preference-item tfa-group">
               <div class="tfa-header">
                 <span class="tfa-label" id="tfa-label">{{ 'profile.twoFactorAuth' | translate }}</span>
-                <span class="tfa-status">{{ twoFactorEnabled ? 'On' : 'Off' }}</span>
+                <span class="tfa-status">{{ twoFactorEnabled ? ('common.on' | translate) : ('common.off' | translate) }}</span>
               </div>
               <span class="toggle-switch">
                 <input type="checkbox" id="tfa-toggle" [(ngModel)]="twoFactorEnabled" aria-labelledby="tfa-label">
@@ -171,7 +171,7 @@
                  [(ngModel)]="passwordForm.currentPassword"
                  name="currentPassword"
                  required
-                 placeholder="Enter current password">
+                 [placeholder]="'profile.placeholders.currentPassword' | translate">
         </div>
 
         <div class="form-group">
@@ -182,7 +182,7 @@
                  name="newPassword"
                  required
                  minlength="8"
-                 placeholder="Enter new password">
+                 [placeholder]="'profile.placeholders.newPassword' | translate">
         </div>
 
         <div class="form-group">
@@ -192,7 +192,7 @@
                  [(ngModel)]="passwordForm.confirmPassword"
                  name="confirmPassword"
                  required
-                 placeholder="Confirm new password">
+                 [placeholder]="'profile.placeholders.confirmPassword' | translate">
         </div>
 
         <div class="form-actions">
