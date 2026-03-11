@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { SavingsGoalService } from '../../../../core/services';
 import { SavingsGoal } from '../../../../core/models';
@@ -21,8 +21,8 @@ interface SavingsGoalDisplay {
 
 interface SavingsTip {
   icon: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   category: 'strategy' | 'motivation' | 'tip';
 }
 
@@ -54,6 +54,11 @@ export class SavingsGoalsComponent implements OnInit {
   selectedGoalForContribution: SavingsGoalDisplay | null = null;
   isSubmittingContribution = false;
 
+  // Delete Modal
+  showDeleteModal = false;
+  goalToDelete: SavingsGoalDisplay | null = null;
+  isDeletingGoal = false;
+
   // Computed: remaining amount to reach goal
   get remainingAmount(): number {
     if (!this.selectedGoalForContribution) return 0;
@@ -83,34 +88,42 @@ export class SavingsGoalsComponent implements OnInit {
   savingsTips: SavingsTip[] = [
     {
       icon: '🎯',
-      title: 'Set Clear Goals',
-      description: 'Define specific, measurable savings targets with deadlines',
+      titleKey: 'savings.tips.clearGoals.title',
+      descriptionKey: 'savings.tips.clearGoals.description',
       category: 'strategy'
     },
     {
       icon: '💰',
-      title: 'Automate Savings',
-      description: 'Set up automatic transfers to your savings account each month',
+      titleKey: 'savings.tips.automate.title',
+      descriptionKey: 'savings.tips.automate.description',
       category: 'tip'
     },
     {
       icon: '📊',
-      title: 'Track Progress',
-      description: 'Review your savings goals weekly to stay motivated',
+      titleKey: 'savings.tips.track.title',
+      descriptionKey: 'savings.tips.track.description',
       category: 'motivation'
     },
     {
       icon: '🔄',
-      title: '50/30/20 Rule',
-      description: 'Allocate 20% of income to savings and debt repayment',
+      titleKey: 'savings.tips.rule.title',
+      descriptionKey: 'savings.tips.rule.description',
       category: 'strategy'
     }
   ];
 
   constructor(
     private readonly savingsGoalService: SavingsGoalService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly translate: TranslateService
   ) {}
+
+  private getCurrentLocale(): string {
+    const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'en';
+    if (lang.startsWith('ar')) return 'ar-MA';
+    if (lang.startsWith('fr')) return 'fr-FR';
+    return 'en-US';
+  }
 
   ngOnInit(): void {
     this.loadRecentContributions();
@@ -125,7 +138,7 @@ export class SavingsGoalsComponent implements OnInit {
           goalName: c.goalName,
           goalColor: c.goalColor,
           amount: c.amount,
-          note: c.note || 'Contribution',
+          note: c.note || this.translate.instant('savings.contributionDefaultNote'),
           date: new Date(c.contributionDate)
         }));
       },
@@ -155,7 +168,7 @@ export class SavingsGoalsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading savings goals:', error);
-        this.errorMessage = 'Failed to load savings goals. Please try again.';
+        this.errorMessage = this.translate.instant('savings.errors.loadFailed');
         this.isLoading = false;
       }
     });
@@ -194,15 +207,15 @@ export class SavingsGoalsComponent implements OnInit {
   }
 
   formatDeadline(deadline?: Date): string {
-    if (!deadline) return 'No deadline';
-    return new Date(deadline).toLocaleDateString('en-US', {
+    if (!deadline) return this.translate.instant('savings.noDeadline');
+    return new Date(deadline).toLocaleDateString(this.getCurrentLocale(), {
       month: 'short',
       year: 'numeric'
     });
   }
 
   formatDate(date: Date): string {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString(this.getCurrentLocale(), {
       month: 'short',
       day: 'numeric'
     });
@@ -281,19 +294,37 @@ export class SavingsGoalsComponent implements OnInit {
     this.router.navigate(['/savings/edit', goalId]);
   }
 
-  deleteGoal(goalId: string): void {
-    if (confirm('Are you sure you want to delete this savings goal?')) {
-      this.savingsGoalService.deleteSavingsGoal(goalId).subscribe({
-        next: () => {
-          this.activeGoals = this.activeGoals.filter(goal => goal.id !== goalId);
-          this.completedGoals = this.completedGoals.filter(goal => goal.id !== goalId);
-          this.calculateSummary();
-        },
-        error: (error) => {
-          console.error('Error deleting goal:', error);
-          alert('Failed to delete savings goal. Please try again.');
-        }
-      });
-    }
+  openDeleteModal(goalId: string): void {
+    this.goalToDelete = this.activeGoals.find(goal => goal.id === goalId)
+      || this.completedGoals.find(goal => goal.id === goalId)
+      || null;
+    this.showDeleteModal = !!this.goalToDelete;
+    this.isDeletingGoal = false;
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.goalToDelete = null;
+    this.isDeletingGoal = false;
+  }
+
+  confirmDeleteGoal(): void {
+    if (!this.goalToDelete || this.isDeletingGoal) return;
+
+    this.isDeletingGoal = true;
+    const goalId = this.goalToDelete.id;
+
+    this.savingsGoalService.deleteSavingsGoal(goalId).subscribe({
+      next: () => {
+        this.activeGoals = this.activeGoals.filter(goal => goal.id !== goalId);
+        this.completedGoals = this.completedGoals.filter(goal => goal.id !== goalId);
+        this.calculateSummary();
+        this.closeDeleteModal();
+      },
+      error: (error) => {
+        console.error('Error deleting goal:', error);
+        this.isDeletingGoal = false;
+      }
+    });
   }
 }

@@ -42,7 +42,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22" />
             </svg>
-            <span>{{ overallPercentage }}% of total target</span>
+            <span>{{ 'savings.totalTargetProgress' | translate:{percentage: overallPercentage} }}</span>
           </div>
         </div>
 
@@ -115,9 +115,14 @@
                 </div>
               </div>
               <div class="goal-actions">
-                <button class="action-btn" (click)="editGoal(goal.id)" title="Edit">
+                <button class="action-btn" (click)="editGoal(goal.id)" [title]="'common.edit' | translate">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                  </svg>
+                </button>
+                <button class="action-btn delete" (click)="openDeleteModal(goal.id)" [title]="'common.delete' | translate">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673A2.25 2.25 0 0 1 15.916 21H8.084a2.25 2.25 0 0 1-2.244-2.327L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.143m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                   </svg>
                 </button>
               </div>
@@ -132,7 +137,7 @@
               </div>
               <div class="progress-info">
                 <span class="percentage-text" [style.color]="goal.color">{{ goal.percentage }}%</span>
-                <span class="remaining-text">{{ goal.target - goal.current | number:'1.0-0' }} MAD to go</span>
+                <span class="remaining-text">{{ 'savings.amountToGo' | translate:{amount: ((goal.target - goal.current) | number:'1.0-0')} }}</span>
               </div>
             </div>
 
@@ -151,7 +156,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Add
+                {{ 'savings.add' | translate }}
               </button>
             </div>
           </div>
@@ -164,7 +169,7 @@
       <!-- Recent Contributions -->
       <section class="panel contributions-panel">
         <div class="panel-header">
-          <h3>Recent Contributions</h3>
+          <h3>{{ 'savings.recentContributions' | translate }}</h3>
         </div>
         <div class="contributions-list">
           @for (contribution of recentContributions; track contribution.id) {
@@ -188,7 +193,7 @@
       <!-- Completed Goals -->
       <section class="panel completed-panel">
         <div class="panel-header">
-          <h3>Completed Goals</h3>
+          <h3>{{ 'savings.completedGoalsPanel' | translate }}</h3>
           <span class="badge">{{ completedGoalsCount }}</span>
         </div>
         <div class="completed-list">
@@ -201,6 +206,11 @@
                 <span class="completed-name">{{ goal.name }}</span>
                 <span class="completed-amount">{{ goal.current | number:'1.0-0' }} MAD</span>
               </div>
+              <button class="action-btn delete" (click)="openDeleteModal(goal.id)" [title]="'common.delete' | translate">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673A2.25 2.25 0 0 1 15.916 21H8.084a2.25 2.25 0 0 1-2.244-2.327L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.143m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+              </button>
               <div class="completed-badge">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -214,15 +224,15 @@
       <!-- Savings Tips -->
       <section class="panel tips-panel">
         <div class="panel-header">
-          <h3>Savings Tips</h3>
+          <h3>{{ 'savings.savingsTips' | translate }}</h3>
         </div>
         <div class="tips-list">
-          @for (tip of savingsTips; track tip.title) {
+          @for (tip of savingsTips; track tip.titleKey) {
             <div class="tip-card">
               <span class="tip-icon">{{ tip.icon }}</span>
               <div class="tip-content">
-                <h4>{{ tip.title }}</h4>
-                <p>{{ tip.description }}</p>
+                <h4>{{ tip.titleKey | translate }}</h4>
+                <p>{{ tip.descriptionKey | translate }}</p>
               </div>
             </div>
           }
@@ -242,7 +252,7 @@
             <span class="material-symbols-outlined">{{ selectedGoalForContribution.icon }}</span>
           </div>
           <div>
-            <h2>Add Contribution</h2>
+            <h2>{{ 'savings.addContribution' | translate }}</h2>
             <p class="modal-goal-name">{{ selectedGoalForContribution.name }}</p>
           </div>
         </div>
@@ -258,22 +268,22 @@
         <div class="progress-summary">
           <div class="progress-amounts">
             <span class="current">{{ selectedGoalForContribution.current | number:'1.0-0' }} MAD</span>
-            <span class="separator">of</span>
+            <span class="separator">{{ 'savings.of' | translate }}</span>
             <span class="target">{{ selectedGoalForContribution.target | number:'1.0-0' }} MAD</span>
           </div>
           <div class="progress-bar-mini">
             <div class="fill" [style.width.%]="selectedGoalForContribution.percentage" [style.background]="selectedGoalForContribution.color"></div>
           </div>
-          <span class="progress-text">{{ selectedGoalForContribution.percentage }}% complete</span>
+          <span class="progress-text">{{ 'savings.progressComplete' | translate:{percentage: selectedGoalForContribution.percentage} }}</span>
         </div>
 
         <!-- Amount Input -->
         <div class="form-group">
           <div class="amount-header">
-            <label for="contributionAmount">Amount (MAD) *</label>
+            <label for="contributionAmount">{{ 'savings.amountMadRequired' | translate }}</label>
             @if (remainingAmount > 0) {
               <button type="button" class="fill-remaining-btn" (click)="fillRemainingAmount()" [style.color]="selectedGoalForContribution.color">
-                Fill remaining ({{ remainingAmount | number:'1.0-0' }} MAD)
+                {{ 'savings.fillRemaining' | translate:{amount: (remainingAmount | number:'1.0-0')} }}
               </button>
             }
           </div>
@@ -296,11 +306,11 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                 </svg>
-                <span>This exceeds the remaining {{ remainingAmount | number:'1.0-0' }} MAD. New total will be {{ (selectedGoalForContribution.current + contributionAmount) | number:'1.0-0' }} MAD ({{ selectedGoalForContribution.target | number:'1.0-0' }} MAD target).</span>
+                <span>{{ 'savings.exceedsRemaining' | translate:{remaining: (remainingAmount | number:'1.0-0'), newTotal: ((selectedGoalForContribution.current + contributionAmount) | number:'1.0-0'), target: (selectedGoalForContribution.target | number:'1.0-0')} }}</span>
               </div>
             } @else {
               <span class="helper-text positive">
-                New total: {{ (selectedGoalForContribution.current + contributionAmount) | number:'1.0-0' }} MAD
+                {{ 'savings.newTotal' | translate:{amount: ((selectedGoalForContribution.current + contributionAmount) | number:'1.0-0')} }}
               </span>
             }
           }
@@ -308,12 +318,12 @@
 
         <!-- Note Input -->
         <div class="form-group">
-          <label for="contributionNote">Note (optional)</label>
+          <label for="contributionNote">{{ 'savings.noteOptional' | translate }}</label>
           <input
             type="text"
             id="contributionNote"
             [(ngModel)]="contributionNote"
-            placeholder="e.g., Monthly savings, Bonus..."
+            [placeholder]="'savings.notePlaceholder' | translate"
             class="note-input"
           />
         </div>
@@ -321,7 +331,7 @@
 
       <div class="modal-footer">
         <button class="btn btn-secondary" (click)="closeContributionModal()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </button>
         <button
           class="btn btn-primary"
@@ -331,12 +341,45 @@
         >
           @if (isSubmittingContribution) {
             <span class="spinner-small"></span>
-            Saving...
+            {{ 'common.saving' | translate }}
           } @else {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add Contribution
+            {{ 'savings.addContribution' | translate }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Savings Goal Delete Confirmation Modal -->
+@if (showDeleteModal && goalToDelete) {
+  <div class="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+      <h3>{{ 'savings.deleteConfirmTitle' | translate }}</h3>
+      <p class="delete-description">{{ 'savings.deleteConfirmMessage' | translate }}</p>
+
+      <div class="delete-preview">
+        <div class="preview-icon" [style.background]="goalToDelete.color + '15'" [style.color]="goalToDelete.color">
+          <span class="material-symbols-outlined">{{ goalToDelete.icon }}</span>
+        </div>
+        <div class="preview-details">
+          <span class="preview-name">{{ goalToDelete.name }}</span>
+          <span class="preview-amount">{{ goalToDelete.current | number:'1.0-0' }} / {{ goalToDelete.target | number:'1.0-0' }} MAD</span>
+        </div>
+      </div>
+
+      <div class="delete-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmDeleteGoal()" [disabled]="isDeletingGoal">
+          @if (isDeletingGoal) {
+            {{ 'common.deleting' | translate }}
+          } @else {
+            {{ 'common.delete' | translate }}
           }
         </button>
       </div>
