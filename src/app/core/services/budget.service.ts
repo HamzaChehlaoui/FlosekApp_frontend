@@ -10,6 +10,7 @@ export interface BudgetRequest {
   endDate: string;
   categoryId: string;
   name?: string;
+  isRecurring?: boolean;
 }
 
 @Injectable({

@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
 import { BudgetService, CategoryService } from '../../../../core/services';
 import { BudgetRequest } from '../../../../core/services/budget.service';
@@ -16,6 +16,7 @@ interface BudgetDisplay {
   spent: number;
   percentage: number;
   categoryId?: string;
+  isRecurring?: boolean;
 }
 
 @Component({
@@ -50,25 +51,46 @@ export class BudgetPlannerComponent implements OnInit {
   modalSuccess = '';
   showCategoryDropdown = false;
 
+  // Delete Modal
+  showDeleteModal = false;
+  budgetToDelete: BudgetDisplay | null = null;
+  isDeleting = false;
+
   // Budget Tips
   budgetTips = [
-    { icon: '💡', title: 'Track Daily', description: 'Review your spending every day to stay on track' },
-    { icon: '🎯', title: 'Set Realistic Goals', description: 'Make sure your budget limits are achievable' },
-    { icon: '📊', title: 'Analyze Trends', description: 'Look at your spending patterns monthly' },
-    { icon: '⚠️', title: 'Emergency Fund', description: 'Always allocate 10-20% for unexpected expenses' }
+    { icon: '💡', titleKey: 'budget.tips.trackDaily.title', descriptionKey: 'budget.tips.trackDaily.description' },
+    { icon: '🎯', titleKey: 'budget.tips.realisticGoals.title', descriptionKey: 'budget.tips.realisticGoals.description' },
+    { icon: '📊', titleKey: 'budget.tips.analyzeTrends.title', descriptionKey: 'budget.tips.analyzeTrends.description' },
+    { icon: '⚠️', titleKey: 'budget.tips.emergencyFund.title', descriptionKey: 'budget.tips.emergencyFund.description' }
   ];
 
   constructor(
     private readonly budgetService: BudgetService,
     private readonly categoryService: CategoryService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    this.setCurrentMonth();
+    this.translate.onLangChange.subscribe(() => this.setCurrentMonth());
     this.initForm();
     this.loadCategories();
     this.loadBudgetData();
+  }
+
+  private setCurrentMonth(): void {
+    this.currentMonth = new Date().toLocaleDateString(this.getCurrentLocale(), {
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  private getCurrentLocale(): string {
+    const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'en';
+    if (lang.startsWith('ar')) return 'ar-MA';
+    if (lang.startsWith('fr')) return 'fr-FR';
+    return 'en-US';
   }
 
   private initForm(): void {
@@ -81,7 +103,8 @@ export class BudgetPlannerComponent implements OnInit {
       amount: ['', [Validators.required, Validators.min(1)]],
       categoryId: ['', Validators.required],
       startDate: [startOfMonth, Validators.required],
-      endDate: [endOfMonth, Validators.required]
+      endDate: [endOfMonth, Validators.required],
+      isRecurring: [false]
     });
   }
 
@@ -108,7 +131,7 @@ export class BudgetPlannerComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading budgets:', error);
-        this.errorMessage = 'Failed to load budgets. Please try again.';
+        this.errorMessage = this.translate.instant('budget.errors.loadFailed');
         this.isLoading = false;
       }
     });
@@ -120,13 +143,14 @@ export class BudgetPlannerComponent implements OnInit {
       : 0;
     return {
       id: budget.id,
-      name: budget.name || budget.category?.name || 'Budget',
+      name: budget.name || budget.category?.name || this.translate.instant('budget.fallbackName'),
       icon: budget.category?.icon || 'account_balance_wallet',
       color: budget.category?.color || '#6b7280',
       allocated: budget.amount,
       spent: budget.spentAmount,
       percentage,
-      categoryId: budget.category?.id
+      categoryId: budget.category?.id,
+      isRecurring: budget.isRecurring
     };
   }
 
@@ -141,7 +165,7 @@ export class BudgetPlannerComponent implements OnInit {
   }
 
   formatDate(date: Date): string {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString(this.getCurrentLocale(), {
       month: 'short',
       day: 'numeric'
     });
@@ -162,7 +186,8 @@ export class BudgetPlannerComponent implements OnInit {
       amount: '',
       categoryId: '',
       startDate: startOfMonth,
-      endDate: endOfMonth
+      endDate: endOfMonth,
+      isRecurring: false
     });
     this.showModal = true;
   }
@@ -184,7 +209,8 @@ export class BudgetPlannerComponent implements OnInit {
         amount: budget.allocated,
         categoryId: budget.categoryId || '',
         startDate: startOfMonth,
-        endDate: endOfMonth
+        endDate: endOfMonth,
+        isRecurring: budget.isRecurring || false
       });
       this.showModal = true;
     }
@@ -215,7 +241,8 @@ export class BudgetPlannerComponent implements OnInit {
       categoryId: this.budgetForm.value.categoryId,
       startDate: this.budgetForm.value.startDate,
       endDate: this.budgetForm.value.endDate,
-      name: this.budgetForm.value.name || undefined
+      name: this.budgetForm.value.name || undefined,
+      isRecurring: this.budgetForm.value.isRecurring || false
     };
 
     if (this.isEditMode && this.editingBudgetId) {
@@ -228,7 +255,7 @@ export class BudgetPlannerComponent implements OnInit {
   private createBudget(data: BudgetRequest): void {
     this.budgetService.createBudget(data).subscribe({
       next: () => {
-        this.modalSuccess = 'Budget created successfully!';
+        this.modalSuccess = this.translate.instant('budget.messages.created');
         this.isSubmitting = false;
         setTimeout(() => {
           this.closeModal();
@@ -237,7 +264,7 @@ export class BudgetPlannerComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error creating budget:', error);
-        this.modalError = error.error?.message || 'Failed to create budget';
+        this.modalError = error.error?.message || this.translate.instant('budget.errors.createFailed');
         this.isSubmitting = false;
       }
     });
@@ -246,7 +273,7 @@ export class BudgetPlannerComponent implements OnInit {
   private updateBudget(data: BudgetRequest): void {
     this.budgetService.updateBudget(this.editingBudgetId!, data).subscribe({
       next: () => {
-        this.modalSuccess = 'Budget updated successfully!';
+        this.modalSuccess = this.translate.instant('budget.messages.updated');
         this.isSubmitting = false;
         setTimeout(() => {
           this.closeModal();
@@ -255,25 +282,41 @@ export class BudgetPlannerComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error updating budget:', error);
-        this.modalError = error.error?.message || 'Failed to update budget';
+        this.modalError = error.error?.message || this.translate.instant('budget.errors.updateFailed');
         this.isSubmitting = false;
       }
     });
   }
 
-  deleteCategory(budgetId: string): void {
-    if (confirm('Are you sure you want to delete this budget category?')) {
-      this.budgetService.deleteBudget(budgetId).subscribe({
-        next: () => {
-          this.budgetCategories = this.budgetCategories.filter(cat => cat.id !== budgetId);
-          this.recalculateBudget();
-        },
-        error: (error) => {
-          console.error('Error deleting budget:', error);
-          alert('Failed to delete budget. Please try again.');
-        }
-      });
-    }
+  openDeleteModal(budgetId: string): void {
+    this.budgetToDelete = this.budgetCategories.find(cat => cat.id === budgetId) || null;
+    this.showDeleteModal = !!this.budgetToDelete;
+    this.isDeleting = false;
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.budgetToDelete = null;
+    this.isDeleting = false;
+  }
+
+  confirmDeleteBudget(): void {
+    if (!this.budgetToDelete || this.isDeleting) return;
+
+    this.isDeleting = true;
+    const budgetId = this.budgetToDelete.id;
+
+    this.budgetService.deleteBudget(budgetId).subscribe({
+      next: () => {
+        this.budgetCategories = this.budgetCategories.filter(cat => cat.id !== budgetId);
+        this.recalculateBudget();
+        this.closeDeleteModal();
+      },
+      error: (error) => {
+        console.error('Error deleting budget:', error);
+        this.isDeleting = false;
+      }
+    });
   }
 
   recalculateBudget(): void {
@@ -289,6 +332,20 @@ export class BudgetPlannerComponent implements OnInit {
   get categoryIdControl() { return this.budgetForm.get('categoryId'); }
   get startDateControl() { return this.budgetForm.get('startDate'); }
   get endDateControl() { return this.budgetForm.get('endDate'); }
+  get isRecurringControl() { return this.budgetForm.get('isRecurring'); }
+
+  onRecurringToggle(): void {
+    const isRecurring = !!this.isRecurringControl?.value;
+    if (isRecurring) {
+      this.startDateControl?.clearValidators();
+      this.endDateControl?.clearValidators();
+    } else {
+      this.startDateControl?.setValidators([Validators.required]);
+      this.endDateControl?.setValidators([Validators.required]);
+    }
+    this.startDateControl?.updateValueAndValidity();
+    this.endDateControl?.updateValueAndValidity();
+  }
 
   getSelectedCategoryIcon(): string {
     const categoryId = this.categoryIdControl?.value;
@@ -305,8 +362,17 @@ export class BudgetPlannerComponent implements OnInit {
   }
 
   selectCategory(category: Category): void {
+    if (this.isCategoryUsed(category.id)) return;
     this.budgetForm.patchValue({ categoryId: category.id });
     this.showCategoryDropdown = false;
+  }
+
+  isCategoryUsed(categoryId: string): boolean {
+    if (this.isEditMode) {
+      const editingBudget = this.budgetCategories.find(b => b.id === this.editingBudgetId);
+      if (editingBudget?.categoryId === categoryId) return false;
+    }
+    return this.budgetCategories.some(b => b.categoryId === categoryId);
   }
 
   @HostListener('document:click', ['$event'])

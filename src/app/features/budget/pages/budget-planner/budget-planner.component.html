@@ -42,7 +42,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22" />
             </svg>
-            <span>{{ budgetCategories.length }} categories</span>
+            <span>{{ 'budget.categoryCount' | translate:{count: budgetCategories.length} }}</span>
           </div>
         </div>
 
@@ -118,8 +118,8 @@
           </div>
         </div>
         <div class="budget-status">
-          <span class="percentage" [class.danger]="budgetPercentage > 90">{{ budgetPercentage }}% used</span>
-          <span class="remaining">{{ totalRemaining | number:'1.0-0' }} MAD left</span>
+          <span class="percentage" [class.danger]="budgetPercentage > 90">{{ 'budget.usedPercentage' | translate:{percentage: budgetPercentage} }}</span>
+          <span class="remaining">{{ 'budget.amountLeft' | translate:{amount: (totalRemaining | number:'1.0-0')} }}</span>
         </div>
       </div>
     </section>
@@ -146,9 +146,14 @@
                 </div>
               </div>
               <div class="category-actions">
-                <button class="action-btn" (click)="editCategory(category.id)" title="Edit">
+                <button class="action-btn" (click)="editCategory(category.id)" [title]="'common.edit' | translate">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                  </svg>
+                </button>
+                <button class="action-btn delete" (click)="openDeleteModal(category.id)" [title]="'common.delete' | translate">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673A2.25 2.25 0 0 1 15.916 21H8.084a2.25 2.25 0 0 1-2.244-2.327L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.143m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                   </svg>
                 </button>
               </div>
@@ -170,7 +175,7 @@
                       [class.danger]="getBudgetStatus(category.percentage) === 'danger'">
                   {{ category.percentage }}%
                 </span>
-                <span class="remaining-text">{{ category.allocated - category.spent | number:'1.0-0' }} MAD left</span>
+                <span class="remaining-text">{{ 'budget.amountLeft' | translate:{amount: ((category.allocated - category.spent) | number:'1.0-0')} }}</span>
               </div>
             </div>
           </div>
@@ -186,12 +191,12 @@
           <h3>{{ 'budget.budgetTips' | translate }}</h3>
         </div>
         <div class="tips-list">
-          @for (tip of budgetTips; track tip.title) {
+          @for (tip of budgetTips; track tip.titleKey) {
             <div class="tip-card">
               <span class="tip-icon">{{ tip.icon }}</span>
               <div class="tip-content">
-                <h4>{{ tip.title }}</h4>
-                <p>{{ tip.description }}</p>
+                <h4>{{ tip.titleKey | translate }}</h4>
+                <p>{{ tip.descriptionKey | translate }}</p>
               </div>
             </div>
           }
@@ -239,7 +244,7 @@
                 <span class="dropdown-icon material-symbols-outlined">{{ getSelectedCategoryIcon() }}</span>
                 <span class="dropdown-text">{{ getSelectedCategoryName() }}</span>
               } @else {
-                <span class="dropdown-text placeholder">Select a category</span>
+                <span class="dropdown-text placeholder">{{ 'budget.form.selectCategory' | translate }}</span>
               }
               <span class="dropdown-arrow material-symbols-outlined">expand_more</span>
             </button>
@@ -247,10 +252,15 @@
               <div class="dropdown-menu">
                 @for (cat of categories; track cat.id) {
                   <button type="button" class="dropdown-item"
-                       [class.selected]="categoryIdControl?.value === cat.id"
+                      [class.selected]="categoryIdControl?.value === cat.id"
+                       [class.used]="isCategoryUsed(cat.id)"
+                       [disabled]="isCategoryUsed(cat.id)"
                        (click)="selectCategory(cat)">
                     <span class="item-icon material-symbols-outlined" [style.color]="cat.color">{{ cat.icon }}</span>
                     <span class="item-name">{{ cat.name }}</span>
+                    @if (isCategoryUsed(cat.id)) {
+                      <span class="item-used-badge">{{ 'budget.alreadyUsed' | translate }}</span>
+                    }
                     @if (categoryIdControl?.value === cat.id) {
                       <span class="item-check material-symbols-outlined">check</span>
                     }
@@ -260,22 +270,22 @@
             }
           </div>
           @if (categoryIdControl?.invalid && categoryIdControl?.touched) {
-            <span class="error-text">Category is required</span>
+            <span class="error-text">{{ 'budget.form.categoryRequired' | translate }}</span>
           }
         </div>
 
         <!-- Budget Name (Optional) -->
         <div class="form-group">
-          <label for="name">Budget Name (Optional)</label>
+          <label for="name">{{ 'budget.form.nameOptional' | translate }}</label>
           <input
             type="text"
             id="name"
             formControlName="name"
-            placeholder="e.g., Monthly Food Budget"
+            [placeholder]="'budget.form.namePlaceholder' | translate"
             [class.invalid]="nameControl?.invalid && nameControl?.touched"
           />
           @if (nameControl?.invalid && nameControl?.touched) {
-            <span class="error-text">Name is too long (max 100 characters)</span>
+            <span class="error-text">{{ 'budget.form.nameTooLong' | translate }}</span>
           }
         </div>
 
@@ -296,13 +306,25 @@
           </div>
           @if (amountControl?.invalid && amountControl?.touched) {
             <span class="error-text">
-              @if (amountControl?.errors?.['required']) { Amount is required }
-              @if (amountControl?.errors?.['min']) { Amount must be at least 1 MAD }
+              @if (amountControl?.errors?.['required']) { {{ 'budget.form.amountRequired' | translate }} }
+              @if (amountControl?.errors?.['min']) { {{ 'budget.form.amountMin' | translate }} }
             </span>
           }
         </div>
 
+        <!-- Recurring Budget Toggle -->
+        <div class="form-group recurring-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isRecurring" (change)="onRecurringToggle()" />
+            <span>{{ 'budget.form.isRecurring' | translate }}</span>
+          </label>
+          @if (isRecurringControl?.value) {
+            <small class="hint-text">{{ 'budget.form.recurringHint' | translate }}</small>
+          }
+        </div>
+
         <!-- Date Range -->
+        @if (!isRecurringControl?.value) {
         <div class="form-row">
           <div class="form-group">
             <label for="startDate">{{ 'budget.form.startDate' | translate }} *</label>
@@ -324,6 +346,7 @@
             />
           </div>
         </div>
+        }
 
         <!-- Form Actions -->
         <div class="form-actions">
@@ -340,6 +363,39 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+}
+
+<!-- Budget Delete Confirmation Modal -->
+@if (showDeleteModal && budgetToDelete) {
+  <div class="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+      <h3>{{ 'budget.deleteConfirmTitle' | translate }}</h3>
+      <p class="delete-description">{{ 'budget.deleteConfirmMessage' | translate }}</p>
+
+      <div class="delete-preview">
+        <div class="preview-icon" [style.background]="budgetToDelete.color + '15'" [style.color]="budgetToDelete.color">
+          <span class="material-symbols-outlined">{{ budgetToDelete.icon }}</span>
+        </div>
+        <div class="preview-details">
+          <span class="preview-name">{{ budgetToDelete.name }}</span>
+          <span class="preview-amount">{{ budgetToDelete.allocated | number:'1.0-0' }} MAD</span>
+        </div>
+      </div>
+
+      <div class="delete-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmDeleteBudget()" [disabled]="isDeleting">
+          @if (isDeleting) {
+            {{ 'common.deleting' | translate }}
+          } @else {
+            {{ 'common.delete' | translate }}
+          }
+        </button>
+      </div>
     </div>
   </div>
 }
