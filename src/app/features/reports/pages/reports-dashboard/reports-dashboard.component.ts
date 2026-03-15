@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
-import { ReportService } from '../../../../core/services';
+import { ReportService, PdfFontService } from '../../../../core/services';
 import {
   ReportData,
   MonthlyReportData,
@@ -24,6 +24,7 @@ import autoTable from 'jspdf-autotable';
 export class ReportsDashboardComponent implements OnInit {
   private readonly reportService = inject(ReportService);
   private readonly translate = inject(TranslateService);
+  private readonly pdfFontService = inject(PdfFontService);
   private readonly currencyCode = 'MAD';
 
   currentPeriod = '';
@@ -183,32 +184,35 @@ export class ReportsDashboardComponent implements OnInit {
     }
   }
 
-  private addPdfHeader(doc: jsPDF, pageWidth: number, logoDataUrl: string | null): number {
+  private addPdfHeader(doc: jsPDF, pageWidth: number, logoDataUrl: string | null, fontName: string): number {
     const title = this.translate.instant('reports.title');
     const generatedOn = this.translate.instant('reports.pdf.generatedOn');
     const periodLabel = this.translate.instant('reports.pdf.period');
+    const isRTL = this.translate.currentLang === 'ar';
 
     // Logo and brand
     if (logoDataUrl) {
-      doc.addImage(logoDataUrl, 'PNG', 40, 32, 36, 36);
+      doc.addImage(logoDataUrl, 'PNG', isRTL ? pageWidth - 76 : 40, 32, 36, 36);
     }
 
-    doc.setFont('helvetica', 'bold');
+    doc.setFont(fontName, 'bold');
     doc.setFontSize(22);
     doc.setTextColor(17, 24, 39);
-    doc.text('Flosek', logoDataUrl ? 84 : 40, 56);
+    const brandX = isRTL ? pageWidth - (logoDataUrl ? 120 : 80) : (logoDataUrl ? 84 : 40);
+    doc.text('Flosek', brandX, 56);
 
     // Title
     doc.setFontSize(16);
     doc.setTextColor(55, 65, 81);
-    doc.text(title, 40, 90);
+    const titleX = isRTL ? pageWidth - 40 : 40;
+    doc.text(title, titleX, 90, { align: isRTL ? 'right' : 'left' });
 
     // Period and date info
-    doc.setFont('helvetica', 'normal');
+    doc.setFont(fontName, 'normal');
     doc.setFontSize(10);
     doc.setTextColor(107, 114, 128);
-    doc.text(`${periodLabel}: ${this.currentPeriod}`, 40, 110);
-    doc.text(`${generatedOn}: ${new Date().toLocaleDateString(this.getCurrentLocale())}`, 40, 124);
+    doc.text(`${periodLabel}: ${this.currentPeriod}`, titleX, 110, { align: isRTL ? 'right' : 'left' });
+    doc.text(`${generatedOn}: ${new Date().toLocaleDateString(this.getCurrentLocale())}`, titleX, 124, { align: isRTL ? 'right' : 'left' });
 
     // Separator line
     doc.setDrawColor(229, 231, 235);
@@ -218,13 +222,14 @@ export class ReportsDashboardComponent implements OnInit {
     return 160;
   }
 
-  private addSummarySection(doc: jsPDF, y: number, pageWidth: number): number {
+  private addSummarySection(doc: jsPDF, y: number, pageWidth: number, fontName: string): number {
     const sectionTitle = this.translate.instant('reports.pdf.executiveSummary');
+    const isRTL = this.translate.currentLang === 'ar';
 
-    doc.setFont('helvetica', 'bold');
+    doc.setFont(fontName, 'bold');
     doc.setFontSize(12);
     doc.setTextColor(17, 24, 39);
-    doc.text(sectionTitle, 40, y);
+    doc.text(sectionTitle, isRTL ? pageWidth - 40 : 40, y, { align: isRTL ? 'right' : 'left' });
 
     y += 20;
 
@@ -243,11 +248,12 @@ export class ReportsDashboardComponent implements OnInit {
       styles: {
         fontSize: 11,
         cellPadding: { top: 8, bottom: 8, left: 12, right: 12 },
-        textColor: [55, 65, 81]
+        textColor: [55, 65, 81],
+        font: fontName
       },
       columnStyles: {
         0: { fontStyle: 'normal', cellWidth: 200 },
-        1: { fontStyle: 'bold', halign: 'right' }
+        1: { fontStyle: 'bold', halign: isRTL ? 'left' : 'right' }
       },
       margin: { left: 40, right: 40 },
       tableLineColor: [229, 231, 235],
@@ -257,18 +263,22 @@ export class ReportsDashboardComponent implements OnInit {
     return (doc as any).lastAutoTable.finalY + 24;
   }
 
-  private addSectionTitle(doc: jsPDF, title: string, y: number): number {
-    doc.setFont('helvetica', 'bold');
+  private addSectionTitle(doc: jsPDF, title: string, y: number, fontName: string): number {
+    const isRTL = this.translate.currentLang === 'ar';
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFont(fontName, 'bold');
     doc.setFontSize(12);
     doc.setTextColor(17, 24, 39);
-    doc.text(title, 40, y);
+    doc.text(title, isRTL ? pageWidth - 40 : 40, y, { align: isRTL ? 'right' : 'left' });
 
     return y + 16;
   }
 
-  private addPdfFooter(doc: jsPDF, pageWidth: number, pageHeight: number): void {
+  private addPdfFooter(doc: jsPDF, pageWidth: number, pageHeight: number, fontName: string): void {
     const totalPages = doc.getNumberOfPages();
     const generatedBy = this.translate.instant('reports.pdf.generatedBy');
+    const isRTL = this.translate.currentLang === 'ar';
 
     for (let page = 1; page <= totalPages; page++) {
       doc.setPage(page);
@@ -277,11 +287,17 @@ export class ReportsDashboardComponent implements OnInit {
       doc.setLineWidth(0.5);
       doc.line(40, pageHeight - 40, pageWidth - 40, pageHeight - 40);
 
-      doc.setFont('helvetica', 'normal');
+      doc.setFont(fontName, 'normal');
       doc.setFontSize(9);
       doc.setTextColor(156, 163, 175);
-      doc.text(generatedBy, 40, pageHeight - 24);
-      doc.text(`${page} / ${totalPages}`, pageWidth - 40, pageHeight - 24, { align: 'right' });
+
+      if (isRTL) {
+        doc.text(generatedBy, pageWidth - 40, pageHeight - 24, { align: 'right' });
+        doc.text(`${page} / ${totalPages}`, 40, pageHeight - 24);
+      } else {
+        doc.text(generatedBy, 40, pageHeight - 24);
+        doc.text(`${page} / ${totalPages}`, pageWidth - 40, pageHeight - 24, { align: 'right' });
+      }
     }
   }
 
@@ -296,17 +312,27 @@ export class ReportsDashboardComponent implements OnInit {
     const doc = new jsPDF({ unit: 'pt', format: 'a4' });
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
+    const currentLang = this.translate.currentLang;
+
+    // Load Arabic/French font if needed
+    let fontName = 'helvetica';
+    if (this.pdfFontService.requiresSpecialFont(currentLang)) {
+      const fontLoaded = await this.pdfFontService.loadArabicFont(doc);
+      if (fontLoaded) {
+        fontName = 'Amiri';
+      }
+    }
 
     // Consistent table styling - simple gray theme
     const tableHead: [number, number, number] = [55, 65, 81];
     const tableText: [number, number, number] = [75, 85, 99];
     const tableAlt: [number, number, number] = [249, 250, 251];
 
-    let y = this.addPdfHeader(doc, pageWidth, logoDataUrl);
-    y = this.addSummarySection(doc, y, pageWidth);
+    let y = this.addPdfHeader(doc, pageWidth, logoDataUrl, fontName);
+    y = this.addSummarySection(doc, y, pageWidth, fontName);
 
     // Monthly Overview
-    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.monthlyOverview'), y);
+    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.monthlyOverview'), y, fontName);
 
     autoTable(doc, {
       startY: y,
@@ -323,8 +349,8 @@ export class ReportsDashboardComponent implements OnInit {
         this.formatCurrency(m.savings)
       ]),
       theme: 'striped',
-      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 10, textColor: tableText },
+      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold', font: fontName },
+      styles: { fontSize: 10, cellPadding: 10, textColor: tableText, font: fontName },
       alternateRowStyles: { fillColor: tableAlt },
       margin: { left: 40, right: 40 }
     });
@@ -332,7 +358,7 @@ export class ReportsDashboardComponent implements OnInit {
     y = (doc as any).lastAutoTable.finalY + 28;
 
     // Category Breakdown
-    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.categoryAnalysis'), y);
+    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.categoryAnalysis'), y, fontName);
 
     autoTable(doc, {
       startY: y,
@@ -349,8 +375,8 @@ export class ReportsDashboardComponent implements OnInit {
         `${c.change >= 0 ? '+' : ''}${c.change}%`
       ]),
       theme: 'striped',
-      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 10, textColor: tableText },
+      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold', font: fontName },
+      styles: { fontSize: 10, cellPadding: 10, textColor: tableText, font: fontName },
       alternateRowStyles: { fillColor: tableAlt },
       margin: { left: 40, right: 40 }
     });
@@ -364,7 +390,7 @@ export class ReportsDashboardComponent implements OnInit {
     }
 
     // Top Expenses
-    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.recentExpenses'), y);
+    y = this.addSectionTitle(doc, this.translate.instant('reports.pdf.recentExpenses'), y, fontName);
 
     autoTable(doc, {
       startY: y,
@@ -381,13 +407,13 @@ export class ReportsDashboardComponent implements OnInit {
         this.formatDate(e.date)
       ]),
       theme: 'striped',
-      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 10, textColor: tableText },
+      headStyles: { fillColor: tableHead, textColor: 255, fontStyle: 'bold', font: fontName },
+      styles: { fontSize: 10, cellPadding: 10, textColor: tableText, font: fontName },
       alternateRowStyles: { fillColor: tableAlt },
       margin: { left: 40, right: 40 }
     });
 
-    this.addPdfFooter(doc, pageWidth, pageHeight);
+    this.addPdfFooter(doc, pageWidth, pageHeight, fontName);
 
     doc.save(`flosek-report-${new Date().toISOString().split('T')[0]}.pdf`);
   }
