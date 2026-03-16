@@ -30,6 +30,12 @@ export class AuthService {
     );
   }
 
+  googleLogin(idToken: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, { idToken }).pipe(
+      tap(response => this.handleAuthResponse(response))
+    );
+  }
+
   private handleAuthResponse(response: AuthResponse): void {
     if (response.access_token) {
       this.saveToken(response.access_token);

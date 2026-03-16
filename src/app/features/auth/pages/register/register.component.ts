@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService, LanguageService } from '../../../../core/services';
+import { AuthService, LanguageService, GoogleAuthService } from '../../../../core/services';
 import { RegisterRequest } from '../../../../core/models';
 
 @Component({
@@ -16,6 +16,7 @@ import { RegisterRequest } from '../../../../core/models';
 export class RegisterComponent {
   private readonly languageService = inject(LanguageService);
   private readonly authService = inject(AuthService);
+  private readonly googleAuthService = inject(GoogleAuthService);
   private readonly router = inject(Router);
 
   userData: RegisterRequest = {
@@ -34,6 +35,37 @@ export class RegisterComponent {
   readonly languages = this.languageService.getLanguages();
 
   constructor() { }
+
+  ngOnInit(): void {
+    this.initializeGoogleSignIn();
+  }
+
+  private initializeGoogleSignIn(): void {
+    this.googleAuthService.initializeGoogleSignIn((response) => this.handleGoogleCredential(response));
+    
+    setTimeout(() => {
+      const googleBtnContainer = document.getElementById('google-btn-container');
+      if (googleBtnContainer) {
+        this.googleAuthService.renderButton(googleBtnContainer, { width: 320 });
+      }
+    }, 100);
+  }
+
+  private handleGoogleCredential(response: any): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.authService.googleLogin(response.credential).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(['/']); // Redirect to home on successful Google auth
+      },
+      error: (error) => {
+        this.errorMessage = error.userMessage || 'Google Sign-In failed. Please try again.';
+        this.isLoading = false;
+      }
+    });
+  }
 
   get currentLanguageCode(): string {
     return this.languageService.getCurrentLanguage().code;

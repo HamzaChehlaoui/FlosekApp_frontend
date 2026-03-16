@@ -539,6 +539,32 @@
   }
 }
 
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0;
+  color: var(--gray-400);
+  font-size: 14px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  span {
+    padding: 0 16px;
+  }
+}
+
+.google-sso-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
 .auth-footer {
   text-align: center;
   margin-top: 28px;

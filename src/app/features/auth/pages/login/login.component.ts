@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService, LanguageService } from '../../../../core/services';
+import { AuthService, LanguageService, GoogleAuthService } from '../../../../core/services';
 import { LoginRequest } from '../../../../core/models';
 
 @Component({
@@ -16,6 +16,7 @@ import { LoginRequest } from '../../../../core/models';
 export class LoginComponent implements OnInit {
   private readonly languageService = inject(LanguageService);
   private readonly authService = inject(AuthService);
+  private readonly googleAuthService = inject(GoogleAuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -42,6 +43,36 @@ export class LoginComponent implements OnInit {
     if (this.route.snapshot.queryParams['sessionExpired']) {
       this.errorMessage = 'Your session has expired. Please login again.';
     }
+
+    this.initializeGoogleSignIn();
+  }
+
+  private initializeGoogleSignIn(): void {
+    this.googleAuthService.initializeGoogleSignIn((response) => this.handleGoogleCredential(response));
+    
+    // Slight delay to ensure the DOM element is ready before rendering
+    setTimeout(() => {
+      const googleBtnContainer = document.getElementById('google-btn-container');
+      if (googleBtnContainer) {
+        this.googleAuthService.renderButton(googleBtnContainer, { width: 320 });
+      }
+    }, 100);
+  }
+
+  private handleGoogleCredential(response: any): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.authService.googleLogin(response.credential).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate([this.returnUrl]);
+      },
+      error: (error) => {
+        this.errorMessage = error.userMessage || 'Google Sign-In failed. Please try again.';
+        this.isLoading = false;
+      }
+    });
   }
 
   togglePassword(): void {

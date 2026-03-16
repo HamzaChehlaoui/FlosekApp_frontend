@@ -218,6 +218,14 @@
         </div>
       </form>
 
+      <div class="auth-divider">
+        <span>{{ ('auth.register.or' | translate) || 'or' }}</span>
+      </div>
+
+      <div class="google-sso-wrapper">
+        <div id="google-btn-container"></div>
+      </div>
+
       <div class="auth-footer">
         <p>{{ 'auth.register.haveAccount' | translate }} <a routerLink="/auth/login">{{ 'auth.register.signIn' | translate }}</a></p>
       </div>

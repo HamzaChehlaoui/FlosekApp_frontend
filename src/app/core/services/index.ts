@@ -7,6 +7,7 @@ export * from './savings-goal.service';
 export * from './salary.service';
 export * from './user.service';
 export * from './icon.service';
+export * from './google-auth.service';
 export * from './language.service';
 export * from './report.service';
 export * from './pdf-font.service';
