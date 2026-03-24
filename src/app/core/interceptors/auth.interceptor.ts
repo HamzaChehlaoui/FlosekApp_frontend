@@ -28,7 +28,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (error.status === 403) {
         router.navigate(['/unauthorized']);
       }
-      return throwError(() => error);
+      const mappedError = {
+        ...error,
+        userMessage: error.error?.message || error.message || 'An unexpected error occurred'
+      };
+      return throwError(() => mappedError);
     })
   );
 };

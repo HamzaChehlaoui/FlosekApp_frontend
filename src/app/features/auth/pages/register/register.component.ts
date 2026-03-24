@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ import { RegisterRequest } from '../../../../core/models';
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   private readonly languageService = inject(LanguageService);
   private readonly authService = inject(AuthService);
   private readonly googleAuthService = inject(GoogleAuthService);
@@ -40,15 +40,18 @@ export class RegisterComponent {
     this.initializeGoogleSignIn();
   }
 
-  private initializeGoogleSignIn(): void {
-    this.googleAuthService.initializeGoogleSignIn((response) => this.handleGoogleCredential(response));
-    
-    setTimeout(() => {
-      const googleBtnContainer = document.getElementById('google-btn-container');
-      if (googleBtnContainer) {
-        this.googleAuthService.renderButton(googleBtnContainer, { width: 320 });
+  @ViewChild('googleBtnContainer', { static: false }) googleBtnContainer!: import('@angular/core').ElementRef;
+
+  private async initializeGoogleSignIn(): Promise<void> {
+    await this.googleAuthService.initializeGoogleSignIn((response) => this.handleGoogleCredential(response));
+
+    setTimeout(async () => {
+      if (this.googleBtnContainer?.nativeElement) {
+        const windowWidth = window.innerWidth;
+        const buttonWidth = windowWidth < 400 ? Math.max(200, windowWidth - 60) : 320;
+        await this.googleAuthService.renderButton(this.googleBtnContainer.nativeElement, { width: buttonWidth });
       }
-    }, 100);
+    }, 50);
   }
 
   private handleGoogleCredential(response: any): void {
