@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.flosek.com/api'
+  apiUrl: 'https://flosek-latest.onrender.com/api'
 };
 
