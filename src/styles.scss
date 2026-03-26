@@ -9,6 +9,9 @@
   src: url('/material-symbols-outlined.woff2') format('woff2'),
        url('https://fonts.gstatic.com/s/materialsymbolsoutlined/v316/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsI.woff2') format('woff2');
 }
+html {
+  zoom: 0.82;
+}
 
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined', sans-serif;
@@ -26,6 +29,7 @@
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
+
 
 :root {
   /* Primary Colors */
