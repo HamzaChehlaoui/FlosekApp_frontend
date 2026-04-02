@@ -14,30 +14,25 @@ export interface ReportRequest {
 }
 
 export interface ReportData {
-  // Report metadata
+
   reportType: ReportType;
   startDate: string;
   endDate: string;
   periodLabel: string;
 
-  // Financial Summary
   totalIncome: number;
   totalExpenses: number;
   netSavings: number;
   savingsRate: number;
 
-  // Changes from previous period
   incomeChange: number;
   expenseChange: number;
   savingsChange: number;
 
-  // Monthly data for trends
   monthlyData: MonthlyReportData[];
 
-  // Category breakdown
   categoryBreakdown: CategoryReportData[];
 
-  // Top expenses
   topExpenses: TopExpenseData[];
 }
 
