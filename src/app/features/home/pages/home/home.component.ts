@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { finalize, timeout } from 'rxjs';
 import { AuthService, DashboardService } from '../../../../core/services';
 import { User, DashboardData, SpendingCategory, SavingsGoalDisplay, TransactionDisplay } from '../../../../core/models';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
@@ -17,8 +16,6 @@ import { HeaderComponent } from '../../../../core/components/header/header.compo
 export class HomeComponent implements OnInit {
   user: User | null = null;
   currentMonth = '';
-  isLoading = true;
-  errorMessage = '';
 
   // Financial Summary
   balance = 0;
@@ -56,25 +53,12 @@ export class HomeComponent implements OnInit {
   }
 
   loadDashboardData(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    this.dashboardService.getDashboard().pipe(
-      // Avoid endless spinner when API connection hangs in pending state.
-      timeout(15000),
-      finalize(() => {
-        this.isLoading = false;
-      })
-    ).subscribe({
+    this.dashboardService.getDashboard().subscribe({
       next: (data: DashboardData) => {
         this.mapDashboardData(data);
       },
       error: (error) => {
         console.error('Error loading dashboard:', error);
-        const isTimeout = error?.name === 'TimeoutError';
-        this.errorMessage = isTimeout
-          ? 'Dashboard request timed out. Please try again.'
-          : 'Failed to load dashboard data. Please check your connection and try again.';
       }
     });
   }
