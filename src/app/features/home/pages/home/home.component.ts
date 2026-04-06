@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize, timeout } from 'rxjs';
 import { AuthService, DashboardService } from '../../../../core/services';
 import { User, DashboardData, SpendingCategory, SavingsGoalDisplay, TransactionDisplay } from '../../../../core/models';
 import { HeaderComponent } from '../../../../core/components/header/header.component';
@@ -58,15 +59,22 @@ export class HomeComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.dashboardService.getDashboard().subscribe({
+    this.dashboardService.getDashboard().pipe(
+      // Avoid endless spinner when API connection hangs in pending state.
+      timeout(15000),
+      finalize(() => {
+        this.isLoading = false;
+      })
+    ).subscribe({
       next: (data: DashboardData) => {
         this.mapDashboardData(data);
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading dashboard:', error);
-        this.errorMessage = 'Failed to load dashboard data. Please try again.';
-        this.isLoading = false;
+        const isTimeout = error?.name === 'TimeoutError';
+        this.errorMessage = isTimeout
+          ? 'Dashboard request timed out. Please try again.'
+          : 'Failed to load dashboard data. Please check your connection and try again.';
       }
     });
   }
