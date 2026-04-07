@@ -93,7 +93,7 @@ The application supports **three languages** (English, Arabic, and French) and p
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone <https://github.com/HamzaChehlaoui/FlosekApp_frontend.git>
 cd flosek_frontend
 ```
 
