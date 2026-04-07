@@ -26,6 +26,12 @@ html {
   scrollbar-width: none;
 }
 
+@media (max-width: 1024px) {
+  html {
+    zoom: 1;
+  }
+}
+
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined', sans-serif;
   font-weight: normal;
